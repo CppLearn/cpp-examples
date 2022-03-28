@@ -3,6 +3,7 @@
 \usepackage{xcolor}
 \usepackage{courier}
 \usepackage{latexsym}
+
 \newtheorem{theorem}{Theorem}
 \newtheorem{definition}{Definition}
 \newtheorem{notation}{Notation}
@@ -16,6 +17,7 @@
 
 \lstnewenvironment{cpp}
 {
+ \bigskip                    
  \lstset{
  	language=C++, % choose the language of the code.
  	frame=single,
@@ -42,19 +44,28 @@
 }
 {}
 
-\begin{document}
-\title{C++ Guide}
-\author{C++ Research Group}
+\lstset{aboveskip=10pt,belowskip=10pt}
 
-\maketitle
-\tableofcontents
-\mainmatter
+\begin{document}
 
 \chapter{Introduction}
 
 This is a guide for C++.
 
-\section{Constructors}
+\chapter{Initializations}
+
+\section{Braced Initialization}
+
+\begin{cpp}
+int x = 0;
+int x = 42;
+int x = {};
+int x = {42};
+int x{};
+int x{42};
+\end{cpp}
+
+\chapter{Constructors}
 
 When does C++ supply constructors?
 
@@ -65,14 +76,39 @@ When does C++ supply constructors?
 \item The compiler creates a copy constructor if we don't supply our own, even if we've writtern other constructors.
 \end{enumerate}
 
-\subsection{Copy Constructor}
+\section{Copy Constructor}
 \begin{cpp}
   
   vector(const vector& v) : my_size{v.my_size}, data{new double[my_size]}
   {
     for (unsigned i = 0; i < my_size; i++) {
       data[i] = v.data[i];
+    }
+    
+\end{cpp}
+
+\chapter{Type Traits}
+
+\begin{cpp}
+
+  #include <type_traits>
+
+  template <typename T>
+  void foo(T) {
+    std::cout << ``T is signed'' << std::endl;
   }
+
+  template <class T, class = typename std::enable_if<std::is_unsigned<T>::value>::type>
+  void foo(T) {
+    std::cout << ``T is unsigned'' << std::endl;
+  }
+
+  struct A {};
+  struct B : A {};
+
+  template <class T, class = typename std::enable_if<std::is_base_of<A, T>::<value>::type>
+  struct C : T {};
+    
 \end{cpp}
 
 \end{document}

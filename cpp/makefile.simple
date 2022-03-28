@@ -1,0 +1,13 @@
+targets = crush
+CFLAGS = -std=c++11
+
+# % matches target :%:%.c uses pattern and adds extension
+# $@ is the target
+# $^ are the dependencies
+# $< just the first dependency (e.g. useful for omitting include files)
+
+all: $(targets)
+
+$(targets):%:%.cpp
+	g++ $(CFLAGS) $^ -o $@
+
