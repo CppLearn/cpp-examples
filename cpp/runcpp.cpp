@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <cmath>
 #include <cstdio>
 #include <cstdlib>
 #include <list>
@@ -13,6 +14,7 @@ std::string list_to_str(std::list<std::string> lines)
   }
   return new_string;
 }
+
 
 int main( int argc, char *argv[] )
 {
@@ -35,39 +37,55 @@ int main( int argc, char *argv[] )
   
   std::ofstream cpp_src;
   cpp_src.open( tmp_path );
+	
   const std::string header;
 
   std::list<std::string> code;
 
+	code.push_back("#\n");
   code.push_back("#include <algorithm>\n");
 	code.push_back("#include <array>\n");
-  code.push_back("#include <fstream>\n");	
+	code.push_back("#include <cstdio>\n");
+	code.push_back("#include <cstdlib>\n");
+  code.push_back("#include <fstream>\n");
+	code.push_back("#include <iomanip>\n");
   code.push_back("#include <iostream>\n");
   code.push_back("#include <list>\n");
+	code.push_back("#include <map>\n");
 	code.push_back("#include <numeric>\n");
+	code.push_back("#include <set>\n");
+	code.push_back("#include <sstream>\n");
   code.push_back("#include <string>\n");
   code.push_back("#include <vector>\n");
-  code.push_back("\n\n");
-  code.push_back("\nint main(int argc, char *argv[])");
-  code.push_back("\n{");
-  code.push_back("\n\n");
-    
-  cpp_src << list_to_str(code);
-  
+  code.push_back("\n");
+       
   std::ifstream cpp_source; // file containing cpp source code.
   std::string line;
   cpp_source.open( cpp_fname );
-  
+
+	std::size_t loc;
   while ( !cpp_source.eof() ) { // read cpp source file.
     getline( cpp_source, line );
-    cpp_src << line;
-    cpp_src << std::endl;
+		loc = line.find("__main__");
+		if (loc != std::string::npos) {  // string not found,
+			code.push_back("\nint main(int argc, char *argv[])");
+			code.push_back("\n{");
+		} else {
+			code.push_back(line);
+		}
   }
-  cpp_src << "\n";
-  cpp_src << "}\n";
-  cpp_source.close();
-  cpp_src.close();
-  
+	
+  code.push_back("\n");
+  code.push_back("}\n");
+
+	// We are now ready to write out code to tmp source file.
+	
+	cpp_src << list_to_str(code);
+	
+	cpp_source.close();  // close C++ snipped file.
+	cpp_src.close();     // close generated source file.
+	
+	
   std::string cmd = "g++ -std=c++11 ";
   cmd = cmd + tmp_path + " -o " + cpp_exe;
   std::cout << "\n Executing => " << cmd << "\n";
@@ -82,11 +100,11 @@ int main( int argc, char *argv[] )
 	system( cmd.c_str() );
 
 	// remove temp source (unless argc == 3)
-	  if ( !keep_file ) {
+	if ( !keep_file ) {
     cmd = "rm -rfv " + tmp_path;
     system( cmd.c_str() );
   }
-
+	
 	
 }
 

@@ -1,0 +1,75 @@
+
+git clone https://github.com/pybind/pybind11.git
+
+mkdir -p projects/pybind
+cd projects/pybind
+
+ln -s ../github/pybind1
+
+
+==========
+test.py
+==========
+
+#!/usr/bin/env python
+
+import build.module_name
+
+print(dir(build.module_name))
+print(build.module_name.some_fn_python_name(3, 5))
+
+m = (build.module_name.PySomeClass(5));
+print(m.multiply(10));
+
+========
+main.cpp
+========
+
+#include <pybind11/pybind11.h>
+#include <pybind11/functional.h>
+
+float some_fn( float arg1, float arg2 ) {
+	return arg1 + arg2;
+}
+
+class SomeClass {
+	
+public:
+	SomeClass(float p_multiplier): multiplier{p_multiplier} {};
+	float multiply( float input ) {
+		return multiplier * input;
+	}
+	
+private:
+	float multiplier;
+	
+};
+
+PYBIND11_MODULE( module_name, handle ) {
+	handle.doc() = "This is the module docs. Rick was here.";
+	handle.def( "some_fn_python_name", &some_fn );
+
+	pybind11::class_<SomeClass>( handle,
+															 "PySomeClass" )
+		.def( pybind11::init<float>() )
+		.def( "multiply", &SomeClass::multiply );
+	;
+}
+
+==============
+CMakeLists.txt
+==============
+
+cmake_minimum_required(VERSION 3.4)
+project(pybind_vid)
+add_subdirectory(pybind11)
+pybind11_add_module(module_name main.cpp)
+
+
+cd build
+cmake ..
+
+./test.py
+
+
+
