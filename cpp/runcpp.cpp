@@ -11,6 +11,7 @@ std::string list_to_str(std::list<std::string> lines)
   std::string new_string = "";
   for(const auto& l : lines) {
     new_string += l;
+		new_string += "\n";
   }
   return new_string;
 }
@@ -42,21 +43,23 @@ int main( int argc, char *argv[] )
 
   std::list<std::string> code;
 
-	code.push_back("#\n");
-  code.push_back("#include <algorithm>\n");
-	code.push_back("#include <array>\n");
-	code.push_back("#include <cstdio>\n");
-	code.push_back("#include <cstdlib>\n");
-  code.push_back("#include <fstream>\n");
-	code.push_back("#include <iomanip>\n");
-  code.push_back("#include <iostream>\n");
-  code.push_back("#include <list>\n");
-	code.push_back("#include <map>\n");
-	code.push_back("#include <numeric>\n");
-	code.push_back("#include <set>\n");
-	code.push_back("#include <sstream>\n");
-  code.push_back("#include <string>\n");
-  code.push_back("#include <vector>\n");
+  code.push_back("#include <algorithm>");
+	code.push_back("#include <array>");
+	code.push_back("#include <chrono>");
+	code.push_back("#include <cstdio>");
+	code.push_back("#include <cstdlib>");
+  code.push_back("#include <fstream>");
+	code.push_back("#include <functional>");
+	code.push_back("#include <iomanip>");
+  code.push_back("#include <iostream>");
+  code.push_back("#include <list>");
+	code.push_back("#include <map>");
+	code.push_back("#include <numeric>");
+	code.push_back("#include <set>");
+	code.push_back("#include <sstream>");
+  code.push_back("#include <string>");
+	code.push_back("#include <thread>");
+  code.push_back("#include <vector>");
   code.push_back("\n");
        
   std::ifstream cpp_source; // file containing cpp source code.
@@ -69,7 +72,7 @@ int main( int argc, char *argv[] )
 		loc = line.find("__main__");
 		if (loc != std::string::npos) {  // string not found,
 			code.push_back("\nint main(int argc, char *argv[])");
-			code.push_back("\n{");
+			code.push_back("\n{\n");
 		} else {
 			code.push_back(line);
 		}
@@ -84,7 +87,6 @@ int main( int argc, char *argv[] )
 	
 	cpp_source.close();  // close C++ snipped file.
 	cpp_src.close();     // close generated source file.
-	
 	
   std::string cmd = "g++ -std=c++11 ";
   cmd = cmd + tmp_path + " -o " + cpp_exe;
