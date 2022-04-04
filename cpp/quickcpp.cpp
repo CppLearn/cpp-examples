@@ -12,77 +12,95 @@ std::string list_to_str(std::list<std::string> lines)
   std::string new_string = "";
   for(const auto& l : lines) {
     new_string += l;
-		new_string += "\n";
+    new_string += "\n";
   }
   return new_string;
 }
 
 namespace ui {
-	std::map<std::string, std::string> color_map = { {"red", "\033[1;31m"},
-																									 {"ured", "\033[4;31m"},
-																									 {"bkred", "\033[41m"},
-																									 //
-																									 {"green", "\033[1;32m"},
-																									 {"ugreen", "\033[4;32m"},
-																									 {"bkgreen", "\033[42m"},
-																									 //
-																									 {"yellow", "\033[1;33m"},
-																									 {"uyellow", "\033[4;33m"},
-																									 {"bkyellow", "\033[43m"},
-																									 //
-																									 {"blue", "\033[1;34m"},
-																									 {"ublue", "\033[4;34m"},
-																									 {"bkblue", "\033[44m"},
-																									 //
-																									 {"magenta", "\033[1;35m"},
-																									 {"umagenta", "\033[4;35m"},
-																									 {"bkmagenta", "\033[45m"},
-																									 //
-																									 {"cyan", "\033[1;36m"},
-																									 {"ucyan", "\033[4;36m"},
-																									 {"bkcyan", "\033[46m"},
-																									 //
-																									 {"white", "\033[1;37m"},
-																									 {"uwhite", "\033[4;37m"},
-																									 {"bkwhite", "\033[47m"},
-																									 {"reset", "\033[0m"} };
+  std::map<std::string, std::string> color = { {"red", "\033[1;31m"},
+                                               {"ured", "\033[4;31m"},
+                                               {"bkred", "\033[41m"},
+                                               //
+                                               {"green", "\033[1;32m"},
+                                               {"ugreen", "\033[4;32m"},
+                                               {"bkgreen", "\033[42m"},
+                                               //
+                                               {"yellow", "\033[1;33m"},
+                                               {"uyellow", "\033[4;33m"},
+                                               {"bkyellow", "\033[43m"},
+                                               //
+                                               {"blue", "\033[1;34m"},
+                                               {"ublue", "\033[4;34m"},
+                                               {"bkblue", "\033[44m"},
+                                               //
+                                               {"magenta", "\033[1;35m"},
+                                               {"umagenta", "\033[4;35m"},
+                                               {"bkmagenta", "\033[45m"},
+                                               //
+                                               {"cyan", "\033[1;36m"},
+                                               {"ucyan", "\033[4;36m"},
+                                               {"bkcyan", "\033[46m"},
+                                               //
+                                               {"white", "\033[1;37m"},
+                                               {"uwhite", "\033[4;37m"},
+                                               {"bkwhite", "\033[47m"},
+                                               {"reset", "\033[0m"} };
 }  // end namespace ui
+
+void add_utils(std::list<std::string>& code)
+{
+  code.push_back( "namespace util {" );
+	code.push_back("");
+  code.push_back( "  template <typename T>" );
+  code.push_back( "  void print_vector(const T& vec, const std::string name)" );
+  code.push_back( "  {"  );
+  code.push_back( "    std::cout << \" ----- [\" << name << \"] -----\";" );
+	code.push_back( "    std::cout << std::endl;" );
+  code.push_back( "    for( const auto& v : vec ) {" );
+  code.push_back( "      std::cout << v << \" \";" );
+  code.push_back( "    }" );
+  code.push_back( "    std::cout << std::endl;" );
+  code.push_back( "  }" );
+	code.push_back("");
+  code.push_back( "}  // end namespace util" );
+}
 
 void add_colormap(std::list<std::string>& code)
 {
-	code.push_back("\n");
-	code.push_back("namespace ui {");
-	code.push_back("  std::map<std::string, std::string> color_map = { {\"red\", \"\033[1;31m\"},");
-	code.push_back("	  																							 {\"ured\", \"\033[4;31m\"},");
-	code.push_back("		  																						 {\"bkred\", \"\033[41m\"},");
-	code.push_back("			  																					 //");
-	code.push_back("				  																				 {\"green\", \"\033[1;32m\"},");
-	code.push_back("					  																			 {\"ugreen\", \"\033[4;32m\"},");
-	code.push_back("						  																		 {\"bkgreen\", \"\033[42m\"},");
-	code.push_back("							  																	 //");
-	code.push_back("								  																 {\"yellow\", \"\033[1;33m\"},");
-	code.push_back("									  															 {\"uyellow\", \"\033[4;33m\"},");
-	code.push_back("										  														 {\"bkyellow\", \"\033[43m\"},");
-	code.push_back("											  													 //");
-	code.push_back("												  												 {\"blue\", \"\033[1;34m\"},");
-	code.push_back("													  											 {\"ublue\", \"\033[4;34m\"},");
-	code.push_back("														  										 {\"bkblue\", \"\033[44m\"},");
-	code.push_back("															  									 //");
-	code.push_back("																  								 {\"magenta\", \"\033[1;35m\"},");
-	code.push_back("																	  							 {\"umagenta\", \"\033[4;35m\"},");
-	code.push_back("																		  						 {\"bkmagenta\", \"\033[45m\"},");
-	code.push_back("										  														 //");
-	code.push_back("											  													 {\"cyan\", \"\033[1;36m\"},");
-	code.push_back("												  												 {\"ucyan\", \"\033[4;36m\"},");
-	code.push_back("													  											 {\"bkcyan\", \"\033[46m\"},");
-	code.push_back("														  										 //");
-	code.push_back("															  									 {\"white\", \"\033[1;37m\"},");
-	code.push_back("																  								 {\"uwhite\", \"\033[4;37m\"},");
-	code.push_back("																	  							 {\"bkwhite\", \"\033[47m\"},");
-	code.push_back("																		  						 {\"reset\", \"\033[0m\"} };");
-	code.push_back("}  // end namespace ui");
-	code.push_back("\n");
-}	
+  code.push_back("namespace ui {");
+	code.push_back("");
+  code.push_back("  std::map<std::string, std::string> color = { {\"red\", \"\033[1;31m\"},");
+  code.push_back("                                               {\"ured\", \"\033[4;31m\"},");
+  code.push_back("                                               {\"bkred\", \"\033[41m\"},");
+  code.push_back("                                               //");
+  code.push_back("                                               {\"green\", \"\033[1;32m\"},");
+  code.push_back("                                               {\"ugreen\", \"\033[4;32m\"},");
+  code.push_back("                                               {\"bkgreen\", \"\033[42m\"},");
+  code.push_back("                                               //");
+  code.push_back("                                               {\"yellow\", \"\033[1;33m\"},");
+  code.push_back("                                               {\"uyellow\", \"\033[4;33m\"},");
+  code.push_back("                                               {\"bkyellow\", \"\033[43m\"},");
+  code.push_back("                                               //");
+  code.push_back("                                               {\"blue\", \"\033[1;34m\"},");
+  code.push_back("                                               {\"ublue\", \"\033[4;34m\"},");
+  code.push_back("                                               {\"bkblue\", \"\033[44m\"},");
+  code.push_back("                                               //");
+  code.push_back("                                               {\"magenta\", \"\033[1;35m\"},");
+  code.push_back("                                               {\"umagenta\", \"\033[4;35m\"},");
+  code.push_back("                                               {\"bkmagenta\", \"\033[45m\"},");
+  code.push_back("                                               //");
+  code.push_back("                                               {\"cyan\", \"\033[1;36m\"},");
+  code.push_back("                                               {\"ucyan\", \"\033[4;36m\"},");
+  code.push_back("                                               {\"bkcyan\", \"\033[46m\"},");
+  code.push_back("                                               //");
+  code.push_back("                                               {\"white\", \"\033[1;37m\"},");
+  code.push_back("                                               {\"uwhite\", \"\033[4;37m\"},");
+  code.push_back("                                               {\"bkwhite\", \"\033[47m\"},");
+  code.push_back("                                               {\"reset\", \"\033[0m\"} };");
+	code.push_back("");	
+  code.push_back("}  // end namespace ui");
+} 
 
 int main( int argc, char *argv[] )
 {
@@ -105,95 +123,96 @@ int main( int argc, char *argv[] )
   
   std::ofstream cpp_src;
   cpp_src.open( tmp_path );
-	
+  
   const std::string header;
 
   std::list<std::string> code;
 
   code.push_back("#include <algorithm>");
-	code.push_back("#include <array>");
-	code.push_back("#include <chrono>");
-	code.push_back("#include <cstdio>");
-	code.push_back("#include <cstdlib>");
+  code.push_back("#include <array>");
+  code.push_back("#include <chrono>");
+  code.push_back("#include <cstdio>");
+  code.push_back("#include <cstdlib>");
   code.push_back("#include <fstream>");
-	code.push_back("#include <functional>");
-	code.push_back("#include <iomanip>");
+  code.push_back("#include <functional>");
+  code.push_back("#include <iomanip>");
   code.push_back("#include <iostream>");
   code.push_back("#include <list>");
-	code.push_back("#include <map>");
-	code.push_back("#include <numeric>");
-	code.push_back("#include <set>");
-	code.push_back("#include <sstream>");
+  code.push_back("#include <map>");
+  code.push_back("#include <math.h>");
+  code.push_back("#include <numeric>");
+  code.push_back("#include <set>");
+  code.push_back("#include <sstream>");
   code.push_back("#include <string>");
-	code.push_back("#include <thread>");
+  code.push_back("#include <thread>");
   code.push_back("#include <vector>");
-  code.push_back("\n");
 
-	// We make ui::color_map available by adding it to the generated code
-	// for convenience for our quick c++ code in case they want to use colors.
-	
-	add_colormap(code);
+  // We make ui::color available by adding it to the generated code
+  // for convenience for our quick c++ code in case they want to use colors.
+	code.push_back("");  
+  add_colormap(code);
+
+  // We also add common utils:: namespace for common display utils.
+	code.push_back("");  
+  add_utils(code);
+	code.push_back("");
 	
   std::ifstream cpp_source; // file containing cpp source code.
   std::string line;
   cpp_source.open( cpp_fname );
 
-	std::size_t loc;
+  std::size_t loc;
   while ( !cpp_source.eof() ) { // read cpp source file.
     getline( cpp_source, line );
-		loc = line.find("__main__");
-		if (loc != std::string::npos) {  // string not found,
-			code.push_back("\nint main(int argc, char *argv[])");
-			code.push_back("\n{\n");
-		} else {
-			code.push_back(line);
-		}
+    loc = line.find("__main__");
+    if (loc != std::string::npos) {  // string not found,
+      code.push_back("int main(int argc, char *argv[])");
+      code.push_back("{");
+    } else {
+      code.push_back(line);
+    }
   }
-	
-  code.push_back("\n");
-  code.push_back("}\n");
+  code.push_back("}");
 
-	// We are now ready to write out code to tmp source file.
-	
-	cpp_src << list_to_str(code);
-	
-	cpp_source.close();  // close C++ snipped file.
-	cpp_src.close();     // close generated source file.
+  // We are now ready to write out code to tmp source file.
+  
+  cpp_src << list_to_str(code);
+  
+  cpp_source.close();  // close C++ snipped file.
+  cpp_src.close();     // close generated source file.
 
-	// We are ready to compile and start showing output.
+  // We are ready to compile and start showing output.
 
-
-	std::cout << ui::color_map["yellow"];
-	std::cout << "\n == Running C++ ==  " << ui::color_map["blue"] << cpp_fname << "\n";
-	std::cout << ui::color_map["reset"];
-	
+  std::cout << ui::color["yellow"];
+  std::cout << "\n == Running C++ ==  " << ui::color["blue"] << cpp_fname << "\n";
+  std::cout << ui::color["reset"];
+  
   std::string cmd = "g++ -std=c++11 ";
   cmd = cmd + tmp_path + " -o " + cpp_exe;
-	
-	std::cout << ui::color_map["green"];
+  
+  std::cout << ui::color["green"];
   std::cout << "\n Executing => " << cmd << "\n";
-	std::cout << ui::color_map["white"] << std::flush;
-	
+  std::cout << ui::color["white"] << std::flush;
+  
   system( cmd.c_str() );
-	cmd = "./" + cpp_exe;
+  cmd = "./" + cpp_exe;
   system( cmd.c_str() );
-	
-	std::cout << ui::color_map["green"] << std::flush;
-	std::cout << "\n\n";
+  
+  std::cout << ui::color["green"] << std::flush;
+  std::cout << "\n\n";
 
-	// remove temp exe
-	cmd = "rm -rf " + cpp_exe;
-	std::cout << ui::color_map["red"] << cmd << "\n" << std::flush;
-	system( cmd.c_str() );
+  // remove temp exe
+  cmd = "rm -rf " + cpp_exe;
+  std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
+  system( cmd.c_str() );
 
-	// remove temp source (unless argc == 3)
-	if ( !keep_file ) {
+  // remove temp source (unless argc == 3)
+  if ( !keep_file ) {
     cmd = "rm -rf " + tmp_path;
-		std::cout << cmd << "\n" << std::flush;
+    std::cout << " " << cmd << "\n" << std::flush;
     system( cmd.c_str() );
   }
-
-	std::cout << ui::color_map["reset"] << "\n" << std::flush;
-
+	
+  std::cout << ui::color["reset"] << "\n" << std::flush;
 }
 
