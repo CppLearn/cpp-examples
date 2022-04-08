@@ -141,6 +141,7 @@ int main( int argc, char *argv[] )
   code.push_back("#include <map>");
   code.push_back("#include <math.h>");
   code.push_back("#include <numeric>");
+	code.push_back("#include <random>");
   code.push_back("#include <set>");
   code.push_back("#include <sstream>");
   code.push_back("#include <string>");
