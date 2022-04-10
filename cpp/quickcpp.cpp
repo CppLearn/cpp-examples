@@ -102,20 +102,42 @@ void add_colormap(std::list<std::string>& code)
   code.push_back("}  // end namespace ui");
 } 
 
+std::string bool_to_str(const bool& b) {
+	std::string s = b ? "true" : "false";
+	return s;
+}
+
 int main( int argc, char *argv[] )
 {
   std::string cpp_fname;
+	bool cpp_fname_set = false;
   std::string cpp_exe = "quick_cpp.exe";
-  bool keep_file = false;
-  
-  if ( argc == 2 || argc == 3 ) {
-    cpp_fname = argv[1];
-    keep_file = ( argc == 3 ) ? true : false;
-  } else {
+  bool keep_src = false;
+	bool keep_exe = false;
+
+	if (argc < 2) {
     std::cout << "Usage: " << argv[0] << " <cpp filename> \n";
     exit(0);
   }
-  
+	
+	int i = 1;
+	while(i < argc) {		
+		std::string arg = argv[i];
+		if (arg == "--keep-src") {
+			keep_src = true;
+		} else if (arg == "--keep-exe") {
+			keep_exe = true;
+		} else {
+			// only accept first filename;
+			if (!cpp_fname_set) {
+				cpp_fname = arg;
+				cpp_fname_set = true;
+			}
+		} // end if arg.
+
+		i++;
+	}
+	
   std::string tmp_path = std::tmpnam(nullptr);
   tmp_path = "." + tmp_path; // make tmpfile local in ./tmp
                              // (tmp is intrisic to this function.)
@@ -125,7 +147,6 @@ int main( int argc, char *argv[] )
   cpp_src.open( tmp_path );
   
   const std::string header;
-
   std::list<std::string> code;
 
   code.push_back("#include <algorithm>");
@@ -140,6 +161,7 @@ int main( int argc, char *argv[] )
   code.push_back("#include <list>");
   code.push_back("#include <map>");
   code.push_back("#include <math.h>");
+	code.push_back("#include <memory>");
   code.push_back("#include <numeric>");
 	code.push_back("#include <random>");
   code.push_back("#include <set>");
@@ -152,16 +174,17 @@ int main( int argc, char *argv[] )
   // for convenience for our quick c++ code in case they want to use colors.
 	code.push_back("");  
   add_colormap(code);
-
+	
   // We also add common utils:: namespace for common display utils.
 	code.push_back("");  
   add_utils(code);
+	code.push_back("");
 	code.push_back("");
 	
   std::ifstream cpp_source; // file containing cpp source code.
   std::string line;
   cpp_source.open( cpp_fname );
-
+	
   std::size_t loc;
   while ( !cpp_source.eof() ) { // read cpp source file.
     getline( cpp_source, line );
@@ -173,6 +196,7 @@ int main( int argc, char *argv[] )
       code.push_back(line);
     }
   }
+	code.push_back("std::cout << std::endl;");
   code.push_back("}");
 
   // We are now ready to write out code to tmp source file.
@@ -181,11 +205,16 @@ int main( int argc, char *argv[] )
   
   cpp_source.close();  // close C++ snipped file.
   cpp_src.close();     // close generated source file.
-
+	
   // We are ready to compile and start showing output.
 
+	std::string keep_src_str = bool_to_str(keep_src);
+	std::string keep_exe_str = bool_to_str(keep_exe);
+	
   std::cout << ui::color["yellow"];
   std::cout << "\n == Running C++ ==  " << ui::color["blue"] << cpp_fname << "\n";
+  std::cout << ui::color["yellow"];
+	std::cout << "keep src [" << keep_src_str << "] keep exe [" << keep_exe_str << "]\n";
   std::cout << ui::color["reset"];
   
   std::string cmd = "g++ -std=c++11 ";
@@ -200,19 +229,21 @@ int main( int argc, char *argv[] )
   system( cmd.c_str() );
   
   std::cout << ui::color["green"] << std::flush;
-  std::cout << "\n\n";
-
-  // remove temp exe
-  cmd = "rm -rf " + cpp_exe;
-  std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
-  system( cmd.c_str() );
-
-  // remove temp source (unless argc == 3)
-  if ( !keep_file ) {
+	std::cout << "\n\n";
+	
+  // remove tmp src, unless flag.
+	if ( !keep_src ) {
     cmd = "rm -rf " + tmp_path;
     std::cout << " " << cmd << "\n" << std::flush;
     system( cmd.c_str() );
   }
+	
+  // remove exe, unless flag.
+	if ( !keep_exe ) {
+		cmd = "rm -rf " + cpp_exe;
+		std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
+		system( cmd.c_str() );
+	}
 	
   std::cout << ui::color["reset"] << "\n" << std::flush;
 }
