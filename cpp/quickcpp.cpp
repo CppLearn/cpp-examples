@@ -168,6 +168,7 @@ int main( int argc, char *argv[] )
   code.push_back("#include <sstream>");
   code.push_back("#include <string>");
   code.push_back("#include <thread>");
+	code.push_back("#include <type_traits>");
   code.push_back("#include <vector>");
 
   // We make ui::color available by adding it to the generated code

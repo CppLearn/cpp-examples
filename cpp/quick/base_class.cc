@@ -1,6 +1,4 @@
 
-#include <type_traits>
-
 struct Primate {
 	virtual void identify() = 0;	
 };
