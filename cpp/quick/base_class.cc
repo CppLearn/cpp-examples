@@ -13,9 +13,9 @@ struct Gorilla : Primate {
 	template<class T>
 	typename std::enable_if<std::is_base_of<Primate, T>::value, T>::type
 
-	mate_with(T animal) {
-		T baby;
-		return baby;
+	interact_with(T animal) {
+		T offspring;
+		return offspring;
 	}
 
 };
@@ -27,12 +27,12 @@ __main__
 Gorilla Grok;
 Human Rick;
 
-auto baby = Grok.mate_with<Human>(Rick);
-baby.identify();
+auto offspring = Grok.interact_with<Human>(Rick);
+offspring.identify();
 
 // Will get compile errors because big_bird isn't a primate.
 // Bird big_bird;
-// auto baby2 = Grok.mate_with<Bird>(big_bird);
+// auto offspring = Grok.interact_with<Bird>(big_bird);
 
 
 
