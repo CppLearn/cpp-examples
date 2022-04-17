@@ -53,7 +53,7 @@ void add_utils(std::list<std::string>& code)
   code.push_back( "namespace util {" );
 	code.push_back("");
   code.push_back( "  template <typename T>" );
-  code.push_back( "  static void print_vector(const T& vec, const std::string name)" );
+  code.push_back( "  static void print_vector(const T& vec, const std::string& name = \"\")" );
   code.push_back( "  {"  );
   code.push_back( "    std::cout << \" ----- [\" << name << \"] -----\";" );
 	code.push_back( "    std::cout << std::endl;" );
@@ -64,7 +64,7 @@ void add_utils(std::list<std::string>& code)
   code.push_back( "  }" );
 	code.push_back("");
 	code.push_back( "  template<typename K, typename V, typename T>"  );
-	code.push_back( "  static void print_map(const std::map<K, V>& m, T title ) {"  );
+	code.push_back( "  static void print_map(const std::map<K, V>& m, const std::string& title = \"\" ) {"  );
 	code.push_back( "  std::cout << std::endl << \" === \" << title << \" === \" << std::endl; " );
 	code.push_back( "  std::cout << std::endl; " );
 	code.push_back( "  for ( const auto& pair : m ) {"  );
@@ -114,6 +114,13 @@ void add_colormap(std::list<std::string>& code)
 std::string bool_to_str(const bool& b) {
 	std::string s = b ? "true" : "false";
 	return s;
+}
+
+bool find_str( const std::string& s, const std::string& expr ) {
+
+  auto loc = s.find(expr);
+  return (loc != std::string::npos);
+    
 }
 
 int main( int argc, char *argv[] )
@@ -197,15 +204,21 @@ int main( int argc, char *argv[] )
 	
   std::size_t loc;
   while ( !cpp_source.eof() ) { // read cpp source file.
+
     getline( cpp_source, line );
-    loc = line.find("__main__");
-    if (loc != std::string::npos) {  // string not found,
+    
+    // Look for our special instructions here.
+    if ( find_str( line, "__stop__" ) ) {
+      break;
+    } else if ( find_str( line, "__main__" ) ) {
       code.push_back("int main(int argc, char *argv[])");
       code.push_back("{");
     } else {
       code.push_back(line);
     }
   }
+
+  // Finish up the C++ file!
 	code.push_back("std::cout << std::endl;");
   code.push_back("}");
 
