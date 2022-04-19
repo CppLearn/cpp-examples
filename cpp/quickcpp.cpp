@@ -53,9 +53,9 @@ void add_utils(std::list<std::string>& code)
   code.push_back( "namespace util {" );
 	code.push_back("");
   code.push_back( "  template <typename T>" );
-  code.push_back( "  static void print_vector(const T& vec, const std::string& name = \"\")" );
+  code.push_back( "  static void print_vector(const T& vec, const std::string& title = \"\")" );
   code.push_back( "  {"  );
-  code.push_back( "    std::cout << \" ----- [\" << name << \"] -----\";" );
+  code.push_back( "    std::cout << \" ----- [\" << title << \"] -----\";" );
 	code.push_back( "    std::cout << std::endl;" );
   code.push_back( "    for( const auto& v : vec ) {" );
   code.push_back( "      std::cout << v << \" \";" );
@@ -63,12 +63,12 @@ void add_utils(std::list<std::string>& code)
   code.push_back( "    std::cout << std::endl;" );
   code.push_back( "  }" );
 	code.push_back("");
-	code.push_back( "  template<typename K, typename V, typename T>"  );
+	code.push_back( "  template<typename K, typename V>"  );
 	code.push_back( "  static void print_map(const std::map<K, V>& m, const std::string& title = \"\" ) {"  );
-	code.push_back( "  std::cout << std::endl << \" === \" << title << \" === \" << std::endl; " );
+  code.push_back( "    std::cout << \" ----- [\" << title << \"] -----\";" );
 	code.push_back( "  std::cout << std::endl; " );
 	code.push_back( "  for ( const auto& pair : m ) {"  );
-	code.push_back( "    std::cout << \"     {\" << pair.first << \": \" << pair.second << \"}\"; " );
+	code.push_back( "    std::cout << \" {\" << pair.first << \": \" << pair.second << \"}\"; " );
 	code.push_back( "    std::cout << std::endl; " );
 	code.push_back( "  }" );
 	code.push_back( " }" );
