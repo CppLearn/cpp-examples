@@ -1,0 +1,12 @@
+digraph D {
+
+  label = "Hansel and Gretel's path through the forest.";
+  labelloc = "t"; // place the label at the top (b seems to be default)
+
+	node [fontname="Arial"];
+
+  FOO -> {BAR, BAZ};
+	A -> {B, C, D} -> {F}
+
+}
+
