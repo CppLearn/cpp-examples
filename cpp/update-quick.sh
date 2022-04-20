@@ -7,5 +7,6 @@ make quickcpp
 git add quickcpp.cpp
 cp -rpv ~/git/cpp/quick/*.cc quick
 git add quick/*.cc
+cp -rpv ~/git/micros/graphviz/*.dot dot
 git commit -a -m "updating cpp files..."
 
