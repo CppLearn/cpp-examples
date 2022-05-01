@@ -9,8 +9,8 @@ cp -rpv ~/git/cpp/quick/*.cc quick
 git add quick/*.cc
 cp -rpv ~/git/micros/graphviz/*.dot ../dot
 git add ../dot/*.dot
-cp -rpv ~/git/lisp/libs/* ../lisp/libs
-git add ../lisp/libs/*
+cp -rpv ~/git/cl/libs/* ../cl/libs
+git add ../cl/libs/*
 git commit -a -m "updating files..."
 
 
