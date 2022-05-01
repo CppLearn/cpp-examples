@@ -26,7 +26,7 @@
 		(ext:run-program "/usr/bin/rm" :arguments
 										 (list "-vf" fname))))
 
-(defun plot-1d-func (f start end)
+(defun plot-1d-func (f &optional (start -10) (end 10))
 	"Plot a 1-dimensional function."
 	(let ( (samples (loop for x from start to end by 0.1 collect (funcall f x))) )
 		(plot-list samples)))
