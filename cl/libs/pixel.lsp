@@ -47,15 +47,22 @@
 (defconstant *cyan*     #(0 255 255))
 (defconstant *magenta*  #(255 0 255))
 
-(defun launch-server ()
+
+(defun launch-server (canvas)
   (progn
     (format t "~% [*] Launching Python/Pygame graphics server...")
-    (ext:run-program "/home/rick/git/lisp/libs/launch-pixel-server.sh")
+		(format t "~% [*] canvas size: ~a x ~a"
+						(first canvas)
+						(second canvas))
+		(format t "~%~%")
+		(defvar args (loop for arg in canvas collect (write-to-string arg)))
+		(append args '("&"))
+		(ext:run-program "/home/rick/git/lisp/libs/launch-pixel-server.sh" :arguments args)
     (sleep 4)))
 
-(defun init ()
+(defun init (canvas)
   (progn
-    (launch-server)
+    (launch-server canvas)
     (format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
     (defvar *pixel-stream* (ext:socket-connect *socket* *ip*))))
 
@@ -97,4 +104,22 @@
 										 (svref color 1)
 										 (svref color 2)))
 	(print mesg *pixel-stream*))
+
+
+
+;; def world_to_canvas_x(self, x):
+        
+;;         dist_to_x_min = abs(self.world_x_min - x)
+;;         dist_x_ratio = float(dist_to_x_min) / float(self.world_width)
+;;         canvas_x = int(round(dist_x_ratio * self.canvas_width))
+
+;;         return canvas_x
+
+;;     def world_to_canvas_y(self, y):
+        
+;;         dist_to_y_min = abs(self.world_y_min - y)
+;;         dist_y_ratio = float(dist_to_y_min) / float(self.world_height)
+;;         canvas_y = int(round(dist_y_ratio * self.canvas_height))
+
+;;         return canvas_y
 
