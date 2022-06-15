@@ -213,6 +213,16 @@ int main( int argc, char *argv[] )
     } else if ( find_str( line, "__main__" ) ) {
       code.push_back("int main(int argc, char *argv[])");
       code.push_back("{");
+			code.push_back("\n");
+			code.push_back("  std::vector<std::string> args;");
+			code.push_back("  // use a strange var name to reduce");
+			code.push_back("  // chance of collision with user var.");
+			code.push_back("  int crunch3r_ = 1;" );
+	    code.push_back("  while(crunch3r_ < argc) {" );
+			code.push_back("    args.push_back( argv[crunch3r_] );" );
+			code.push_back("    crunch3r_++;" );
+			code.push_back("  }" );			
+			code.push_back(" ");
     } else {
       code.push_back(line);
     }
