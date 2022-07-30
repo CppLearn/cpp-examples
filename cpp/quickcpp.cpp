@@ -117,10 +117,10 @@ std::string bool_to_str(const bool& b) {
 }
 
 bool find_str( const std::string& s, const std::string& expr ) {
-
+	
   auto loc = s.find(expr);
   return (loc != std::string::npos);
-    
+	
 }
 
 int main( int argc, char *argv[] )
@@ -187,12 +187,10 @@ int main( int argc, char *argv[] )
 	code.push_back("#include <type_traits>");
   code.push_back("#include <vector>");
 
-  // We make ui::color available by adding it to the generated code
-  // for convenience for our quick c++ code in case they want to use colors.
 	code.push_back("");  
-  add_colormap(code);
+	add_colormap(code);
 	
-  // We also add common utils:: namespace for common display utils.
+  // We add common utils:: namespace for common display utils.
 	code.push_back("");  
   add_utils(code);
 	code.push_back("");
@@ -271,13 +269,18 @@ int main( int argc, char *argv[] )
     system( cmd.c_str() );
   }
 	
-  // remove exe, unless flag.
-	if ( !keep_exe ) {
-		cmd = "rm -rf " + cpp_exe;
+  // save exe if --keep_exe
+	if ( keep_exe ) {
+		cmd = "cp -p " + cpp_exe + " ./" + cpp_fname + ".exe";
 		std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
 		system( cmd.c_str() );
 	}
-	
+
+	// remove tmp exe
+	cmd = "rm -rf " + cpp_exe;
+	std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
+	system( cmd.c_str() );
+
   std::cout << ui::color["reset"] << "\n" << std::flush;
 }
 
