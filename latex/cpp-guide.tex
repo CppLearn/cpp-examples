@@ -48,11 +48,47 @@
 
 \begin{document}
 
-\chapter{Introduction}
+\chapter{Basics}
 
-This is a guide for C++.
+\section{String-Literals}
+\begin{cpp}
+char english[] = ``A book holds a house of gold.'';
+\end{cpp}
 
-\chapter{Initializations}
+\section{Range-Based For Loop}
+
+\begin{cpp}
+for (element-type element-name : array-name) {
+}
+\end{cpp}
+
+\section{Enum Class}
+
+\begin{cpp}
+  enum class Race {
+    Elf,
+    Dwarf,
+    Halfing,
+    Human,
+    Hobbit
+ };
+
+  Race myrace = Race::Hobbit;
+
+  switch(race) {
+    case Race::Dwarf {
+      printf(``You carry an axe.'');
+      break;
+    }
+    case Race::Hobbit {
+      printf(``Your feet are hairy.'');
+      break;
+    }
+    default: {
+      printf(``Error: unknown race!'');
+    }
+  }  
+\end{cpp}
 
 \section{Braced Initialization}
 
@@ -64,6 +100,40 @@ int x = {42};
 int x{};
 int x{42};
 \end{cpp}
+
+\section{PODs}
+
+\begin{cpp}
+  struct POD {
+    string name;
+    int age;
+    float salary;
+  };
+
+  POD pod1 {``Rick'', 50, 85e3};
+  
+\end{cpp}
+
+\section{Class Basics}
+
+\begin{enumerate}
+\item struct members are public by default.
+\item class members are private by default.
+\item class invariant: a feature of a class that is always true.
+
+\begin{cpp}
+
+  struct Clock {
+    void addyear() {
+      year++;
+    }
+    int year;
+  };
+ 
+\end{cpp}
+  
+\end{enumerate}
+
 
 \chapter{Constructors}
 
