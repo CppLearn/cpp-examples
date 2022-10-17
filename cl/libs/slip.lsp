@@ -32,8 +32,8 @@
    :generate
    :sort-list
    :random-choice
-	 :random-elt
-	 :shuffle
+   :random-elt
+   :shuffle
    :one-of
    :list->array
                                         ; files
@@ -201,25 +201,25 @@
 
 (defun shuffle (l)
   "Return a randomized (shuffled) copy of a list."
-	(let ( (shuffled nil)
-				 (used-indices nil)
-				 (len-l (length l))
-				 (new-rand nil) )
+  (let ( (shuffled nil)
+         (used-indices nil)
+         (len-l (length l))
+         (new-rand nil) )
 
-		(loop while (not (= (length shuffled) len-l)) do
-			(progn
-				; get new random index.
+    (loop while (not (= (length shuffled) len-l)) do
+      (progn
+        ; get new random index.
         (setf new-rand (random len-l))
-																				; loop until we get a random index of input list that
-																				; we haven't used before.
+                                        ; loop until we get a random index of input list that
+                                        ; we haven't used before.
         (loop while (member new-rand used-indices) do
           (setf new-rand (random len-l)))
-																				; 
+                                        ; 
         (push new-rand used-indices)
         (push (nth new-rand l) shuffled)))
-		
-																				; return rearranged list.
-		shuffled))
+    
+                                        ; return rearranged list.
+    shuffled))
 
 (defun one-of (set)
   "Pick on element of set, and amke a list of it."

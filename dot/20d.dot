@@ -1,0 +1,18 @@
+digraph D {
+
+  label = "Twenty-sided Die";
+  labelloc = "t"; // place the label at the top (b seems to be default)
+
+	node [fontname="Arial"];
+
+  {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+   12, 13, 14, 15, 16, 17, 18, 19, 20} [shape = "circle" style = "filled"]
+
+   17 -> {3, 7, 10}
+   7 -> {17, 1, 15}
+   3 -> {17, 16, 19}
+   1 -> {7, 19, 13}
+   2 -> {18, 12, 20}
+
+}
+
