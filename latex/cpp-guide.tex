@@ -114,6 +114,19 @@ int x{42};
   
 \end{cpp}
 
+\section{Using}
+
+\begin{cpp}
+
+  using real = double;
+
+  using vertex = std::string;
+
+  template <typename Value>
+  using vector = tensor<1, Value>;
+
+\end{cpp}
+
 \section{Class Basics}
 
 \begin{enumerate}
@@ -156,6 +169,49 @@ When does C++ supply constructors?
     }
     
 \end{cpp}
+
+\chapter{Templates}
+
+\section{Partial Specialization}
+
+\begin{cpp}
+
+  template <typename RealType}
+  class vector< complex<RealType> >
+  {
+  }
+
+  template <typename T>
+  inline T abs(const std::complex<T>& x)
+  {
+  }
+
+\end{cpp}
+
+\section{Non-Type Parameters for Templates}
+
+\begin{cpp}
+
+  template <typename T, int Size = 3>
+  
+  class FSizeVector {
+    
+    using self = FSizeVector;
+
+    public:
+    
+        using valuetype = T;
+
+        const static int mysize = size;
+        FSizeVector(int s = Size);
+
+        self& operator=(const self& that);
+        self operator+(const self& that) const;
+        
+  }
+    
+\end{cpp}
+
 
 \chapter{Type Traits}
 
