@@ -17,37 +17,6 @@ std::string list_to_str(std::list<std::string> lines)
   return new_string;
 }
 
-namespace ui {
-  std::map<std::string, std::string> color = { {"red", "\033[1;31m"},
-                                               {"ured", "\033[4;31m"},
-                                               {"bkred", "\033[41m"},
-                                               //
-                                               {"green", "\033[1;32m"},
-                                               {"ugreen", "\033[4;32m"},
-                                               {"bkgreen", "\033[42m"},
-                                               //
-                                               {"yellow", "\033[1;33m"},
-                                               {"uyellow", "\033[4;33m"},
-                                               {"bkyellow", "\033[43m"},
-                                               //
-                                               {"blue", "\033[1;34m"},
-                                               {"ublue", "\033[4;34m"},
-                                               {"bkblue", "\033[44m"},
-                                               //
-                                               {"magenta", "\033[1;35m"},
-                                               {"umagenta", "\033[4;35m"},
-                                               {"bkmagenta", "\033[45m"},
-                                               //
-                                               {"cyan", "\033[1;36m"},
-                                               {"ucyan", "\033[4;36m"},
-                                               {"bkcyan", "\033[46m"},
-                                               //
-                                               {"white", "\033[1;37m"},
-                                               {"uwhite", "\033[4;37m"},
-                                               {"bkwhite", "\033[47m"},
-                                               {"reset", "\033[0m"} };
-}  // end namespace ui
-
 void add_utils(std::list<std::string>& code)
 {
   code.push_back( "namespace util {" );
@@ -74,42 +43,6 @@ void add_utils(std::list<std::string>& code)
 	code.push_back( " }" );
   code.push_back( "}  // end namespace util" );
 }
-
-void add_colormap(std::list<std::string>& code)
-{
-  code.push_back("namespace ui {");
-	code.push_back("");
-  code.push_back("  std::map<std::string, std::string> color = { {\"red\", \"\033[1;31m\"},");
-  code.push_back("                                               {\"ured\", \"\033[4;31m\"},");
-  code.push_back("                                               {\"bkred\", \"\033[41m\"},");
-  code.push_back("                                               //");
-  code.push_back("                                               {\"green\", \"\033[1;32m\"},");
-  code.push_back("                                               {\"ugreen\", \"\033[4;32m\"},");
-  code.push_back("                                               {\"bkgreen\", \"\033[42m\"},");
-  code.push_back("                                               //");
-  code.push_back("                                               {\"yellow\", \"\033[1;33m\"},");
-  code.push_back("                                               {\"uyellow\", \"\033[4;33m\"},");
-  code.push_back("                                               {\"bkyellow\", \"\033[43m\"},");
-  code.push_back("                                               //");
-  code.push_back("                                               {\"blue\", \"\033[1;34m\"},");
-  code.push_back("                                               {\"ublue\", \"\033[4;34m\"},");
-  code.push_back("                                               {\"bkblue\", \"\033[44m\"},");
-  code.push_back("                                               //");
-  code.push_back("                                               {\"magenta\", \"\033[1;35m\"},");
-  code.push_back("                                               {\"umagenta\", \"\033[4;35m\"},");
-  code.push_back("                                               {\"bkmagenta\", \"\033[45m\"},");
-  code.push_back("                                               //");
-  code.push_back("                                               {\"cyan\", \"\033[1;36m\"},");
-  code.push_back("                                               {\"ucyan\", \"\033[4;36m\"},");
-  code.push_back("                                               {\"bkcyan\", \"\033[46m\"},");
-  code.push_back("                                               //");
-  code.push_back("                                               {\"white\", \"\033[1;37m\"},");
-  code.push_back("                                               {\"uwhite\", \"\033[4;37m\"},");
-  code.push_back("                                               {\"bkwhite\", \"\033[47m\"},");
-  code.push_back("                                               {\"reset\", \"\033[0m\"} };");
-	code.push_back("");	
-  code.push_back("}  // end namespace ui");
-} 
 
 std::string bool_to_str(const bool& b) {
 	std::string s = b ? "true" : "false";
@@ -188,7 +121,6 @@ int main( int argc, char *argv[] )
   code.push_back("#include <vector>");
 
 	code.push_back("");  
-	add_colormap(code);
 	
   // We add common utils:: namespace for common display utils.
 	code.push_back("");  
@@ -242,24 +174,18 @@ int main( int argc, char *argv[] )
 	std::string keep_src_str = bool_to_str(keep_src);
 	std::string keep_exe_str = bool_to_str(keep_exe);
 	
-  std::cout << ui::color["yellow"];
-  std::cout << "\n == Running C++ ==  " << ui::color["blue"] << cpp_fname << "\n";
-  std::cout << ui::color["yellow"];
+  std::cout << "\n == Running C++ ==  " << cpp_fname << "\n";
 	std::cout << "keep src [" << keep_src_str << "] keep exe [" << keep_exe_str << "]\n";
-  std::cout << ui::color["reset"];
   
   std::string cmd = "g++ -std=c++11 ";
   cmd = cmd + tmp_path + " -o " + cpp_exe;
   
-  std::cout << ui::color["green"];
   std::cout << "\n Executing => " << cmd << "\n";
-  std::cout << ui::color["white"] << std::flush;
   
   system( cmd.c_str() );
   cmd = "./" + cpp_exe;
   system( cmd.c_str() );
   
-  std::cout << ui::color["green"] << std::flush;
 	std::cout << "\n\n";
 	
   // remove tmp src, unless flag.
@@ -272,15 +198,15 @@ int main( int argc, char *argv[] )
   // save exe if --keep_exe
 	if ( keep_exe ) {
 		cmd = "cp -p " + cpp_exe + " ./" + cpp_fname + ".exe";
-		std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
+		std::cout << " " << cmd << "\n" << std::flush;
 		system( cmd.c_str() );
 	}
 
 	// remove tmp exe
 	cmd = "rm -rf " + cpp_exe;
-	std::cout << ui::color["red"] << " " << cmd << "\n" << std::flush;
+	std::cout << " " << cmd << "\n" << std::flush;
 	system( cmd.c_str() );
 
-  std::cout << ui::color["reset"] << "\n" << std::flush;
+  std::cout << "\n" << std::flush;
 }
 
