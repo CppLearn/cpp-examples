@@ -19,22 +19,22 @@
     :stddev-list
     :mean-dev-list
     :assign-probs
-		:regression-xy ) )
+    :regression-xy ) )
 
 (in-package dice)
 
 (defun binomial-trial(n x p &optional (verbose nil))
   "Compute probability of x out of n trials succeeding 
    given probability p of success for each trial."
-	(let ((probability
-				 (* (moth:choose n x) 
-						(expt p x) 
-						(expt (- 1 p) (- n x)))) )
-		(if verbose
-				(format t "~% probability of ~a/~a successes is: ~$ %"
-								x n (* 100 probability)))
-		probability))
-				
+  (let ((probability
+         (* (moth:choose n x) 
+            (expt p x) 
+            (expt (- 1 p) (- n x)))) )
+    (if verbose
+        (format t "~% probability of ~a/~a successes is: ~$ %"
+                x n (* 100 probability)))
+    probability))
+        
 (defun poisson(lambda k)
   "Given the average rate (lambda) of a process that varies
   randomly around that rate, compute the Poisson probability
@@ -52,12 +52,12 @@
 ;; (defvar p-meningitis (/ 1.0 50000))
 ;; (defvar p-meningitis-stiff-neck 0.5)
 ;; (format t "~% ~,5f"
-;; 				(dice:bayes p-stiff-neck p-meningitis p-meningitis-stiff-neck))
+;;        (dice:bayes p-stiff-neck p-meningitis p-meningitis-stiff-neck))
 ;; => 0.00020
 
 (defun bayes (p-symptom p-disease p-s-given-d)
-	"Returns the probability of a disease given a symptom."
-	(/ (* p-s-given-d p-disease) p-symptom))
+  "Returns the probability of a disease given a symptom."
+  (/ (* p-s-given-d p-disease) p-symptom))
 
 (defun p-complement (p)
     (- 1.0 p))
@@ -119,38 +119,38 @@
     entropy-sum))
 
 (defun mean-nth (data n)
- 	"Compute the mean of column n in a list of tuples.
- 	e.g. (defvar data '( (x y)
- 	                      ...
- 	                     (x y)))"
- 	
- 	(let ( (sum (loop for row in data sum (nth n row))) )
- 		(float (/ sum (length data)))))
+  "Compute the mean of column n in a list of tuples.
+  e.g. (defvar data '( (x y)
+                        ...
+                       (x y)))"
+  
+  (let ( (sum (loop for row in data sum (nth n row))) )
+    (float (/ sum (length data)))))
 
 (defun regression-xy (data)
-	(let ( (a 0.0)
-				 (b 0.0)
-				 (mean-x (mean-nth data 0))
-				 (mean-y (mean-nth data 1))
-				 (numerator 0.0)
-				 (denom 0.0) )
-		
-		(format t "~% compute-b: mean-x: ~a" mean-x)
-		(format t "~% compute-b: mean-y: ~a" mean-y)
-		
-		(setf numerator (loop for xy in data sum
-																				 (* (- (nth 0 xy) mean-x)
-																						(- (nth 1 xy) mean-y))))
-		(setf denom (loop for xy in data sum
-																		 (expt (- (nth 0 xy) mean-x) 2)))
-		
-		(format t "~% compute-b: numerator: ~a" numerator)
-		(format t "~% compute-b: denom: ~a" denom)
-		(setf b (float (/ numerator denom)))
-		(setf a (- mean-y (* b mean-x)))
-		(format t "~% compute-b: a: ~a" a)
-		(format t "~% compute-b: b: ~a" b)
-		(values a b)))
+  (let ( (a 0.0)
+         (b 0.0)
+         (mean-x (mean-nth data 0))
+         (mean-y (mean-nth data 1))
+         (numerator 0.0)
+         (denom 0.0) )
+    
+    (format t "~% compute-b: mean-x: ~a" mean-x)
+    (format t "~% compute-b: mean-y: ~a" mean-y)
+    
+    (setf numerator (loop for xy in data sum
+                                         (* (- (nth 0 xy) mean-x)
+                                            (- (nth 1 xy) mean-y))))
+    (setf denom (loop for xy in data sum
+                                     (expt (- (nth 0 xy) mean-x) 2)))
+    
+    (format t "~% compute-b: numerator: ~a" numerator)
+    (format t "~% compute-b: denom: ~a" denom)
+    (setf b (float (/ numerator denom)))
+    (setf a (- mean-y (* b mean-x)))
+    (format t "~% compute-b: a: ~a" a)
+    (format t "~% compute-b: b: ~a" b)
+    (values a b)))
 
 
 
