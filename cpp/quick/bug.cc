@@ -7,7 +7,7 @@ public:
 	inline void display() {
 		std::cout << "\n Bug: ";
 		std::cout << "\n     name: " << name_;
-		std::cout << "\n     color: " << color_;
+		std::cout << "\n     color: " << color_ << std::endl;
 		std::cout << "\n     num legs: " << num_legs_;
 		std::cout << "\n";
 	}

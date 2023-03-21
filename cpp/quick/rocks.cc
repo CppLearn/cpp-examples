@@ -12,12 +12,12 @@ for( int i = 0; i < 25; i++ ) {
 
 util::print_vector( rocks, "rocks" );
 
-std::cout << ui::color["yellow"];
 while( !rocks.empty() ) {
 	util::print_vector( rocks, "rocks" );
 	rocks.pop_back();
  }
-std::cout << ui::color["reset"];	
+
+
 
 
 
