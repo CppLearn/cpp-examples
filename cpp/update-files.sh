@@ -10,15 +10,6 @@ make quickcpp
 git add quickcpp.cpp
 
 #
-# Timer
-#
-echo "updating Timer..."
-cp -pv ~/git/cpp/NanoTimer/nanotimer.hpp .
-cp -pv ~/git/cpp/NanoTimer/nanotimer.cpp .
-cp -pv ~/git/cpp/NanoTimer/nano_main.cpp .
-cp -pv ~/git/cpp/NanoTimer/makefile .
-
-#
 # C++ quick files
 #
 cp -rpv ~/git/cpp/quick/*.cc quick
