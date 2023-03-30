@@ -16,17 +16,10 @@ cp -rpv ~/git/cpp/quick/*.cc quick
 git add quick/*.cc
 
 #
-# DOT graph files
-#
-cp -rpv ~/git/micros/graphviz/*.dot ../dot
-git add ../dot/*.dot
-
-#
 # CL libs
 #
 cp -rpv ~/git/lisp/libs/* ../cl/libs
 git add ../cl/libs/*
-
 
 git commit -a -m "updating files..."
 
