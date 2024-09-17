@@ -8,7 +8,8 @@
 
   ( :use :common-lisp :slip )
 
-  ( :export 
+  ( :export
+		:rand-int
     :binomial-trial
     :poisson
     :repeats
@@ -22,6 +23,11 @@
     :regression-xy ) )
 
 (in-package dice)
+
+(defun rand-int (start stop)
+	(let ( (r (random 1.0))
+				 (width (- stop start)) )
+		(+ start (round (* r width)))))
 
 (defun binomial-trial(n x p &optional (verbose nil))
   "Compute probability of x out of n trials succeeding 

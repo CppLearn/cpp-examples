@@ -25,7 +25,9 @@
     :est-pi-0
     :primep
     :slow-primep
-    :sophiep ) )
+    :sophiep
+    :mapval
+    ))
 
 (in-package moth)
 
@@ -140,4 +142,12 @@
   (if (and (moth:primep n) 
            (moth:primep (+ (* 2 n) 1)))
       t))
+
+(defun mapval (x istart iend ostart oend)
+  (let* ((ratio (/ (- oend ostart) (- iend istart)))
+         (newpt (* (- x istart) ratio))
+         (ans (truncate (float (+ newpt ostart))))) ans))
+
+
+
 

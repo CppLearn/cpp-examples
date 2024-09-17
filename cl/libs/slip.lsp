@@ -53,6 +53,9 @@
    :show-hash
    :show-hash-type
    :sum-hash
+	 :stats-hash
+																				; built-in test data
+	                                      ; to play with.
    :creature-list
   ))
 
@@ -355,6 +358,43 @@
   "Sum values across a hash table.  Assumes values are numeric."
   (loop for key being the hash-keys of h
      sum (gethash key h)))
+
+(defun compute-sqr-deviation (x mean)
+	(expt (- x mean) 2))
+
+(defun z-score (x mean sigma)
+	(/ (- x mean) sigma))
+
+(defun stats-hash (h)
+	"Display various statistics on the values on a hash h. (Assumes float values.)"
+	(progn
+		(slip:show-hash h)                    ; show hash again
+		(let* ((n (hash-table-count h))
+					 (sum (slip:sum-hash h))
+					 (mean (/ sum n))
+					 (sum-deviations 0.0)
+					 (sigma 0.0)
+					 (s 0.0)
+					 (z-scores (make-hash-table)))
+			
+			(loop for k being the hash-keys of h do (incf sum-deviations (compute-sqr-deviation (gethash k h)
+																																													mean)))
+			(setf sigma (sqrt (/ sum-deviations n)))
+			(setf s (sqrt (/ sum-deviations (1- n))))
+
+																				; create new hash table for z-scores.
+			(loop for k being the hash-keys of h do
+				(slip:store-hash z-scores k (z-score (gethash k h) mean s)))
+					 
+			(format t "~% -----------------------------------------")
+			(format t "~% n:                      ~,4f" n)
+			(format t "~% sum:                    ~,4f" sum)
+			; (format t "~% sum squared deviations: ~,4f" sum-deviations)
+			(format t "~% mean:                   ~,4f" mean)
+			(format t "~% sigma (pop):            ~,4f" sigma)
+			(format t "~% s (sample):             ~,4f" s)
+			(format t "~% z-scores:")
+			(slip:show-hash z-scores))))
 
 ;;    [Test Helpers]
 
