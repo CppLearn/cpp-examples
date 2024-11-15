@@ -10,6 +10,7 @@
 
   ( :export
 		:rand-int
+		:rand-string
     :binomial-trial
     :poisson
     :repeats
@@ -28,6 +29,16 @@
 	(let ( (r (random 1.0))
 				 (width (- stop start)) )
 		(+ start (round (* r width)))))
+
+(defun rand-string (n)
+	(let ((rstring nil))
+		(loop repeat n do
+			(if (> 0.5 (random 1.0))
+					(push (code-char (dice:rand-int 40 90))
+								rstring)
+					(push (code-char (dice:rand-int 97 122))
+								rstring)))
+		(coerce rstring 'string)))
 
 (defun binomial-trial(n x p &optional (verbose nil))
   "Compute probability of x out of n trials succeeding 

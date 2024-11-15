@@ -25,7 +25,6 @@
    :startswith
    :endswith
    :split-line   
-   :rand-string
                                         ; lists
    :foreach-i
    :i
@@ -168,12 +167,6 @@
                (setf token (subseq line 0 delim-loc))
                (setf tokens (append (list token) tokens))
                (setf line (subseq line (+ 1 delim-loc) (length line))))))))
-
-(defun rand-string (len)
-  (let ( (s "") )
-    (loop for i from 1 to len do
-          (setf s (concatenate 'string s (string (rand-char)))))
-    s ))
 
 ;;   [List Functions]
 
