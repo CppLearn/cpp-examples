@@ -41,6 +41,7 @@
    :file-to-list
    :cut-file
    :list-to-file
+   :with-file-lines
    :file-matrix
    :matrix-to-file
                                         ; arrays
@@ -319,13 +320,18 @@
 
 (defun show-hash (h)
   "Show summary of hash table contents."
-  (loop for key being the hash-keys of h do
-        (slip:dot-display (string key) (gethash key h) 40)))
+	(let ((keys nil))
+		(setf keys (loop for k being the hash-keys of h collect k))
+		(setf keys (reverse keys))
+		(dolist (k keys)
+			(slip:dot-display (string k) (gethash k h) 40))))
 
 (defun show-hash-type (h)
   "Show summary of hash table contents."
-  (loop for key being the hash-keys of h do
-        (slip:dot-display-type (string key) (gethash key h) 30)))
+	(let ((keys nil))
+		(keys (loop for key being the hash-keys of h collect key))
+		(dolist (key keys)
+      (slip:dot-display-type (string key) (gethash key h) 30))))
 
 (defun assoc-to-hash (l)
   "Convert an assoc list to a hash table."
