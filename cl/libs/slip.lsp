@@ -329,7 +329,7 @@
 (defun show-hash-type (h)
   "Show summary of hash table contents."
 	(let ((keys nil))
-		(keys (loop for key being the hash-keys of h collect key))
+		(setf keys (loop for key being the hash-keys of h collect key))
 		(dolist (key keys)
       (slip:dot-display-type (string key) (gethash key h) 30))))
 
