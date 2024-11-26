@@ -47,6 +47,7 @@
                                         ; arrays
    :extract-column
                                         ; hash funcs
+	 :hash-key
    :store-hash
    :assoc-to-hash
    :list-to-hash
@@ -56,7 +57,36 @@
 	 :stats-hash
 																				; built-in test data
 	                                      ; to play with.
-   :creature-list
+	 :creature-list
+	 :color
+																				; colors
+	 :black
+	 :red
+	 :green
+	 :yellow
+	 :blue
+	 :magenta
+	 :cyan
+	 :white
+
+	 :black_u  
+	 :red_u    
+   :green_u  
+   :yellow_u 
+   :blue_u   
+   :magenta_u
+   :cyan_u   
+   :white_u  
+
+   :black_b  
+   :red_b    
+   :green_b  
+   :yellow_b 
+   :blue_b   
+   :magenta_b
+   :cyan_b   
+   :white_b  
+
   ))
 
 (in-package slip)
@@ -314,6 +344,11 @@
 
 ;;   [Hash Table Functions]
 
+(defun hash-key (ht key)
+	"Test if key is in hash table."
+	(not (null (member key
+										 (loop for k being the hash-keys of ht collect k)))))
+
  (defun store-hash (h k v)
    "Store value (v) into hash table (h) using key (k)." 
    (setf (gethash k h) v)) 
@@ -402,5 +437,71 @@
   (list 'dragon 'mermaid 'gorgon 'griffin 'minotaur 
         'kraken 'cyclops 'troll 'orc 'goblin 'unicorn
         'fawn 'siren 'vampire 'werewolf))
+
+;; (defmacro with-timing (&body body)
+;;   "A macro that wraps a body of code and prints the time taken to execute.
+;;    Measures both real (wall clock) and run time."
+;;   (let ((start-real-time (gensym 'real-time))
+;;         (start-run-time (gensym 'run-time))
+;;         (end-real-time (gensym 'real-time))
+;;         (end-run-time (gensym 'run-time)))
+;;     `(let ((,start-real-time (get-internal-real-time))
+;;            (,start-run-time (get-internal-run-time)))
+;;        (unwind-protect
+;;             (progn 
+;;               ,@body)
+;;          (let ((,end-real-time (get-internal-real-time))
+;;                (,end-run-time (get-internal-run-time)))
+;;            (format t "~&Execution Time:~
+;;                      ~%  Real Time: ~,3F seconds~
+;;                      ~%  Run Time:  ~,3F seconds"
+;;                    (/ (- ,end-real-time ,start-real-time) 
+;;                       internal-time-units-per-second)
+;;                    (/ (- ,end-run-time ,start-run-time) 
+;;                       internal-time-units-per-second)))))))
+
+
+(defvar black   "[1;30m")
+(defvar red     "[1;31m")
+(defvar green   "[1;32m")
+(defvar yellow  "[1;33m")
+(defvar blue    "[1;34m")
+(defvar magenta "[1;35m")
+(defvar cyan    "[1;36m")
+(defvar white   "[1;37m")
+
+(defvar black_u   "[4;30m")
+(defvar red_u     "[4;31m")
+(defvar green_u   "[4;32m")
+(defvar yellow_u  "[4;33m")
+(defvar blue_u    "[4;34m")
+(defvar magenta_u "[4;35m")
+(defvar cyan_u    "[4;36m")
+(defvar white_u   "[4;37m")
+
+(defvar black_b   "[40m")
+(defvar red_b     "[41m")
+(defvar green_b   "[42m")
+(defvar yellow_b  "[43m")
+(defvar blue_b    "[44m")
+(defvar magenta_b "[45m")
+(defvar cyan_b    "[46m")
+(defvar white_b   "[47m")
+
+(defvar reset   "[0m")
+
+(defvar esc     #\ESC)
+
+(defun color (mesg color)
+	"Print out in red using format statement"
+	(format t "~% ~c~a" esc color)
+	(format t "~A" mesg)
+	(format t "~c~a" esc reset))
+
+
+
+
+
+
 
 
