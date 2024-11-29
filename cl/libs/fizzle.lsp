@@ -10,9 +10,10 @@
 
   ( :export 
    ; constants
-   :speed-of-light
-   :gravity
-   :feet-in-meter
+		:+speed-of-light+
+		:+G+
+		:+gravity+
+		:+feet-in-meter+
    ; physics
    :time-dilation
    :free-fall
@@ -25,9 +26,10 @@
 
 ; constants
 
-(defconstant speed-of-light 299792458) ; speed of light m/s
-(defconstant gravity 9.8) ; m/s^2
-(defconstant feet-in-meter 3.28084) ; ft in a meter
+(defconstant +speed-of-light+ 299792458) ; speed of light m/s
+(defconstant +gravity+ 9.8) ; m/s^2
+(defconstant +G+ 6.67430e-11) ; (N*m^2)/kg^2
+(defconstant +feet-in-meter+ 3.28084) ; ft in a meter
 
 ; testing with:
 ;
@@ -38,14 +40,14 @@
 (defun time-dilation (pct_c t_hrs)
   "Computes the time in t_hrs that have elapsed on Earth if someone is 
    moving close to the speed of light (pct_c) for time in hours (t_hrs)."
-  (let* ( (c_2 (expt speed-of-light 2))
-         (v (* pct_c speed-of-light))
+  (let* ( (c_2 (expt +speed-of-light+ 2))
+         (v (* pct_c +speed-of-light+))
           (v_2 (expt v 2)))
     (/ t_hrs (sqrt (- 1 (/ v_2 c_2))))))
 
 (defun free-fall (s)
   "Computes free fall in meters after seconds (s)."
-  (* 0.5 gravity (expt s 2)))
+  (* 0.5 +gravity+ (expt s 2)))
   
 (defun disp-free-fall (s)
   (format t "~% An object falls ~a meters after ~a seconds." (fizzle:free-fall s) s))

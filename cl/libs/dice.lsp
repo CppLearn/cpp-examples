@@ -145,6 +145,11 @@
     (float (/ sum (length data)))))
 
 (defun regression-xy (data)
+	"Compute linear regression using (x, y) pairs. 
+   Output: 
+          intercept
+          slope
+  "
   (let ( (a 0.0)
          (b 0.0)
          (mean-x (mean-nth data 0))
