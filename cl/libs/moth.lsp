@@ -8,25 +8,32 @@
 
   ( :use :common-lisp :slip )
 
-  ( :export 
-
-    :log10
+  ( :export
+																				; conversion
     :one-rad
     :deg->rad
-    :even-p
+																				; functions
+		:log10
     :fib
-    :fact
+		:fact
+    :est-pi-0		
+																				; linear algebra
+		:dot
+																				; interpolation
+    :mapval
+																				; combinatorics 
     :permute
     :choose
     :partition
     :a-divides-b
     :greatest-divisor
     :a-congruent-b-mod-c
-    :est-pi-0
-    :primep
+																				; predicates
+    :even-p
+		:primep
     :slow-primep
     :sophiep
-    :mapval
+		
     ))
 
 (in-package moth)
@@ -147,6 +154,18 @@
   (let* ((ratio (/ (- oend ostart) (- iend istart)))
          (newpt (* (- x istart) ratio))
          (ans (truncate (float (+ newpt ostart))))) ans))
+
+(defun dot (a b)
+	"Compute the dot product between vectors (lists) a and b."
+	(if (= (length a) (length b))
+			(reduce #'+ (mapcar #'* a b))
+			(error "size of vectors not equal!")))
+
+
+
+
+
+
 
 
 
