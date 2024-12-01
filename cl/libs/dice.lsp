@@ -21,7 +21,9 @@
     :stddev-list
     :mean-dev-list
     :assign-probs
-    :regression-xy ) )
+    :regression-xy
+		:normal-dist
+		) )
 
 (in-package dice)
 
@@ -173,6 +175,14 @@
     (format t "~% compute-b: a: ~a" a)
     (format t "~% compute-b: b: ~a" b)
     (values a b)))
+
+																				; Distributions
+
+(defun normal-dist (x mu sigma)
+	(let ( (pi-term (/ 1 (* sigma (sqrt (* 2 pi)))))
+				 (e-term (exp (* (- (/ 1 2)) (expt (/ (- x mu) sigma) 2)))))
+		(* pi-term e-term)))
+
 
 
 
