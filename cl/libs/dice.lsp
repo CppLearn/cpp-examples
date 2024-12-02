@@ -178,10 +178,12 @@
 
 																				; Distributions
 
-(defun normal-dist (x mu sigma)
+(defun normal-dist (x &optional (mu 0) (sigma 1.0))
+	"Formula of normal distribution for single variable x."
 	(let ( (pi-term (/ 1 (* sigma (sqrt (* 2 pi)))))
 				 (e-term (exp (* (- (/ 1 2)) (expt (/ (- x mu) sigma) 2)))))
 		(* pi-term e-term)))
+
 
 
 
