@@ -26,6 +26,7 @@
    :endswith
    :split-line   
                                         ; lists
+   :filter
    :foreach-i
    :i
    :generate
@@ -47,30 +48,30 @@
                                         ; arrays
    :extract-column
                                         ; hash funcs
-	 :hash-key
+   :hash-key
    :store-hash
    :assoc-to-hash
    :list-to-hash
    :show-hash
    :show-hash-type
    :sum-hash
-	 :stats-hash
-																				; built-in test data
-	                                      ; to play with.
-	 :creature-list
-	 :color
-																				; colors
-	 :black
-	 :red
-	 :green
-	 :yellow
-	 :blue
-	 :magenta
-	 :cyan
-	 :white
+   :stats-hash
+                                        ; built-in test data
+                                        ; to play with.
+   :creature-list
+   :color
+                                        ; colors
+   :black
+   :red
+   :green
+   :yellow
+   :blue
+   :magenta
+   :cyan
+   :white
 
-	 :black_u  
-	 :red_u    
+   :black_u  
+   :red_u    
    :green_u  
    :yellow_u 
    :blue_u   
@@ -200,6 +201,10 @@
                (setf line (subseq line (+ 1 delim-loc) (length line))))))))
 
 ;;   [List Functions]
+
+(defun filter (f l)
+  (remove-if (lambda (x)
+               (not (funcall f x))) l))
 
 (defmacro foreach-i(lst &body b)
   "example: slip:foreach-i animals (print slip:i))"
@@ -345,9 +350,9 @@
 ;;   [Hash Table Functions]
 
 (defun hash-key (ht key)
-	"Test if key is in hash table."
-	(not (null (member key
-										 (loop for k being the hash-keys of ht collect k)))))
+  "Test if key is in hash table."
+  (not (null (member key
+                     (loop for k being the hash-keys of ht collect k)))))
 
  (defun store-hash (h k v)
    "Store value (v) into hash table (h) using key (k)." 
@@ -355,17 +360,17 @@
 
 (defun show-hash (h)
   "Show summary of hash table contents."
-	(let ((keys nil))
-		(setf keys (loop for k being the hash-keys of h collect k))
-		(setf keys (reverse keys))
-		(dolist (k keys)
-			(slip:dot-display (string k) (gethash k h) 40))))
+  (let ((keys nil))
+    (setf keys (loop for k being the hash-keys of h collect k))
+    (setf keys (reverse keys))
+    (dolist (k keys)
+      (slip:dot-display (string k) (gethash k h) 40))))
 
 (defun show-hash-type (h)
   "Show summary of hash table contents."
-	(let ((keys nil))
-		(setf keys (loop for key being the hash-keys of h collect key))
-		(dolist (key keys)
+  (let ((keys nil))
+    (setf keys (loop for key being the hash-keys of h collect key))
+    (dolist (key keys)
       (slip:dot-display-type (string key) (gethash key h) 30))))
 
 (defun assoc-to-hash (l)
@@ -394,41 +399,41 @@
      sum (gethash key h)))
 
 (defun compute-sqr-deviation (x mean)
-	(expt (- x mean) 2))
+  (expt (- x mean) 2))
 
 (defun z-score (x mean sigma)
-	(/ (- x mean) sigma))
+  (/ (- x mean) sigma))
 
 (defun stats-hash (h)
-	"Display various statistics on the values on a hash h. (Assumes float values.)"
-	(progn
-		(slip:show-hash h)                    ; show hash again
-		(let* ((n (hash-table-count h))
-					 (sum (slip:sum-hash h))
-					 (mean (/ sum n))
-					 (sum-deviations 0.0)
-					 (sigma 0.0)
-					 (s 0.0)
-					 (z-scores (make-hash-table)))
-			
-			(loop for k being the hash-keys of h do (incf sum-deviations (compute-sqr-deviation (gethash k h)
-																																													mean)))
-			(setf sigma (sqrt (/ sum-deviations n)))
-			(setf s (sqrt (/ sum-deviations (1- n))))
+  "Display various statistics on the values on a hash h. (Assumes float values.)"
+  (progn
+    (slip:show-hash h)                    ; show hash again
+    (let* ((n (hash-table-count h))
+           (sum (slip:sum-hash h))
+           (mean (/ sum n))
+           (sum-deviations 0.0)
+           (sigma 0.0)
+           (s 0.0)
+           (z-scores (make-hash-table)))
+      
+      (loop for k being the hash-keys of h do (incf sum-deviations (compute-sqr-deviation (gethash k h)
+                                                                                          mean)))
+      (setf sigma (sqrt (/ sum-deviations n)))
+      (setf s (sqrt (/ sum-deviations (1- n))))
 
-																				; create new hash table for z-scores.
-			(loop for k being the hash-keys of h do
-				(slip:store-hash z-scores k (z-score (gethash k h) mean s)))
-					 
-			(format t "~% -----------------------------------------")
-			(format t "~% n:                      ~,4f" n)
-			(format t "~% sum:                    ~,4f" sum)
-			; (format t "~% sum squared deviations: ~,4f" sum-deviations)
-			(format t "~% mean:                   ~,4f" mean)
-			(format t "~% sigma (pop):            ~,4f" sigma)
-			(format t "~% s (sample):             ~,4f" s)
-			(format t "~% z-scores:")
-			(slip:show-hash z-scores))))
+                                        ; create new hash table for z-scores.
+      (loop for k being the hash-keys of h do
+        (slip:store-hash z-scores k (z-score (gethash k h) mean s)))
+           
+      (format t "~% -----------------------------------------")
+      (format t "~% n:                      ~,4f" n)
+      (format t "~% sum:                    ~,4f" sum)
+      ; (format t "~% sum squared deviations: ~,4f" sum-deviations)
+      (format t "~% mean:                   ~,4f" mean)
+      (format t "~% sigma (pop):            ~,4f" sigma)
+      (format t "~% s (sample):             ~,4f" s)
+      (format t "~% z-scores:")
+      (slip:show-hash z-scores))))
 
 ;;    [Test Helpers]
 
@@ -493,15 +498,10 @@
 (defvar esc     #\ESC)
 
 (defun color (mesg color)
-	"Print out in red using format statement"
-	(format t "~% ~c~a" esc color)
-	(format t "~A" mesg)
-	(format t "~c~a" esc reset))
-
-
-
-
-
+  "Print out in red using format statement"
+  (format t "~% ~c~a" esc color)
+  (format t "~A" mesg)
+  (format t "~c~a" esc reset))
 
 
 
