@@ -9,7 +9,9 @@
   ( :use :common-lisp :slip )
 
   ( :export
-																				; conversion
+					; general
+    :sgn
+					; conversion
     :one-rad
     :deg->rad
 																				; functions
@@ -40,6 +42,12 @@
 
 (defconstant one-rad (/ pi 180.0))
 (defconstant log10e 2.303)
+
+(defun sgn (n)
+  (cond
+    ( (< n 0) -1 )
+    ( (= n 0) 0 )
+    ( (> n 0) 1 )))
 
 (defun log10 (n)
   (/ (log n) log10e))

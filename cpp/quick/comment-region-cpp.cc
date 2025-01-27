@@ -45,7 +45,7 @@ std::cout << "\n//  ------------------------------------------------------------
 while( tokens.size() > 0 ) {
 	std::string line = get_next_line( tokens );
 	std::cout << "\n//  " << line;
-	for ( int i = 0; i < (max_length - line.length()) + 1; i++ ) {
+	for ( int i = 0; i < (max_length - static_cast<int>(line.length())) + 1; i++ ) {
 		std::cout << " "; 
 	}
 	std::cout << "//";

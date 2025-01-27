@@ -10,7 +10,7 @@ for( int i = 0; i < 25; i++ ) {
 	rocks.push_back( distribution(generator)  );
  }
 
-util::print_vector( rocks, "rocks" );
+util::print_vector( rocks, "rocks vector" );
 
 while( !rocks.empty() ) {
 	util::print_vector( rocks, "rocks" );

@@ -6,6 +6,7 @@
 #include <list>
 #include <map>
 #include <string>
+#include <sys/wait.h>
 
 std::string list_to_str(std::list<std::string> lines)
 {
@@ -63,6 +64,7 @@ int main( int argc, char *argv[] )
   std::string cpp_exe = "quick_cpp.exe";
   bool keep_src = false;
   bool keep_exe = false;
+	bool no_sound = false;
   std::string flags = "";
 
   if (argc < 2) {
@@ -81,6 +83,8 @@ int main( int argc, char *argv[] )
       keep_src = true;
     } else if (arg == "--keep-exe") {
       keep_exe = true;
+		} else if (arg == "--no-sound" ) {
+			no_sound = true;
     } else {
       // only accept first filename;
       if (!cpp_fname_set) {
@@ -182,7 +186,7 @@ int main( int argc, char *argv[] )
   std::cout << "\n == Running C++ ==  " << cpp_fname << "\n";
   std::cout << "keep src [" << keep_src_str << "] keep exe [" << keep_exe_str << "]\n";
   
-  std::string cmd = "g++ -O0 -pg -std=c++11 ";
+  std::string cmd = "g++ -Wall -Werror -O0 -std=c++17 ";
 	if (flags != "") {
 		cmd = cmd + flags + " ";
 	}
@@ -191,8 +195,18 @@ int main( int argc, char *argv[] )
   
   system( cmd.c_str() );
   cmd = "./" + cpp_exe;
-  system( cmd.c_str() );
-  
+
+	int ret = system( cmd.c_str() );
+
+	if ( !no_sound ) {
+		if (WEXITSTATUS(ret) == 0) {
+			cmd = "aplay ~/git/scripts/assets/sounds/compile.wav";
+		} else {
+			cmd = "aplay ~/git/scripts/assets/sounds/error.wav";
+		}
+	}
+	
+	system( cmd.c_str() );		
   std::cout << "\n\n";
 	
   // remove tmp src, unless flag.
