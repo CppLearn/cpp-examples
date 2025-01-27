@@ -110,12 +110,6 @@ private:
 
 __main__
 
-FileManager fm;
-fm.add_file(100, "/home/rick/git/lisp/manifest.txt");
-fm.dump_file(100);
-fm.add_file(200, "/home/rick/.bashrc");
-fm.dump_file(200);
-
 std::string value;
 
 fm.add_file(300, "./data/fortune.dat");
