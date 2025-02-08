@@ -38,7 +38,7 @@ public:
 		return a + b;
 	}
 	double operator() (double a, double b) {
-		
+		return 0.0;
 	}
 		
 private:
@@ -54,6 +54,8 @@ Trapezoid<exp3t> t(myfunction);
 t.say_hello();
 double s = t.foo(3.0, 9.0);
 std::cout << "\n result = " << s;
+
+
 
 
 

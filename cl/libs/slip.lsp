@@ -58,6 +58,10 @@
    :stats-hash
                                         ; built-in test data
                                         ; to play with.
+
+	 :save-to-file                        ; save/load funcs
+	 :load-from-file
+	 
    :creature-list
    :color
                                         ; colors
@@ -434,6 +438,19 @@
       (format t "~% s (sample):             ~,4f" s)
       (format t "~% z-scores:")
       (slip:show-hash z-scores))))
+
+;;   [Load/Save Functions]
+
+(defun save-to-file (obj fname)
+	"Save a Lisp object to file."
+	(with-open-file (f fname :direction :output :if-exists :supersede)
+		(let ((*print-readably* t))
+			(print obj f))))
+
+(defun load-from-file (fname)
+	"Read a Lisp object from file."
+	(with-open-file (f fname :direction :input)
+		(read f)))
 
 ;;    [Test Helpers]
 
