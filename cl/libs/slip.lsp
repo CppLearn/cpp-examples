@@ -59,9 +59,10 @@
                                         ; built-in test data
                                         ; to play with.
 
-	 :save-to-file                        ; save/load funcs
-	 :load-from-file
-	 
+   :save-to-file                        ; save/load funcs
+   :open-file
+   :read-objects
+   
    :creature-list
    :color
                                         ; colors
@@ -442,15 +443,34 @@
 ;;   [Load/Save Functions]
 
 (defun save-to-file (obj fname)
-	"Save a Lisp object to file."
-	(with-open-file (f fname :direction :output :if-exists :supersede)
-		(let ((*print-readably* t))
-			(print obj f))))
+  "Save a Lisp object to file."
+  (let ( (f nil)
+         (*print-readably* t))
+    (if (probe-file fname)
+        (setf f (open fname :direction :output :if-exists :append))
+        (setf f (open fname :direction :output :if-exists :supersede)))
+    (print obj f)
+    (close f)))
 
-(defun load-from-file (fname)
-	"Read a Lisp object from file."
-	(with-open-file (f fname :direction :input)
-		(read f)))
+(defun open-file (fname)
+  "Open a file for reading."
+  (let ( (f (open fname :direction :input)) )
+    (format t "~% Now you can load lisp objects with:")
+    (format t "~%   (defvar a (read f))")
+    (format t "~%   (defvar b (read f))")
+    (format t "~%   (close f)~%~%")
+    f))
+
+(defun read-objects(fname)
+  "Read Lisp objects from file."
+  (let ( (objects nil) )
+    (with-open-file (f fname :direction :input)
+      (loop for obj = (read f nil 'end)
+            until (eq obj 'end)
+            do (progn
+                 (push obj objects)))
+      (reverse objects))))
+
 
 ;;    [Test Helpers]
 
@@ -519,6 +539,4 @@
   (format t "~% ~c~a" esc color)
   (format t "~A" mesg)
   (format t "~c~a" esc reset))
-
-
 
