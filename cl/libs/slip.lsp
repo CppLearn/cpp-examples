@@ -11,9 +11,9 @@
   ( :export 
                                         ; general
    :hello
-   :blank-line
-   :report 
-   :disp
+		:blank-line
+	 :puts		
+   :dump
    :typewriter-string
    :dot-display
    :dot-display-type
@@ -24,7 +24,11 @@
    :rtrim
    :startswith
    :endswith
-   :split-line   
+   :split-string
+	 :char-in-string
+	 :not-these-chars
+	 :word-in-string
+   :last-word
                                         ; lists
    :filter
    :foreach-i
@@ -106,10 +110,10 @@
   (fresh-line)
   (terpri))
 
-(defun report (label var)
-  (format t "~% [+] ~a = ~a" label var))
+(defun puts (var)
+	(format t "~% :: ~a" var))
 
-(defun disp (label &rest objs)
+(defun dump (label &rest objs)
   (format t "~% [+] ~a:" label)
   (dolist (o objs) do
     (format t "~%     ~a" o)))
@@ -189,7 +193,7 @@
   "Test if a string (str) ends with the substring (sub)."
   (slip:startswith (reverse sub) (reverse str)))
 
-(defun split-line(line delim)
+(defun split-string(line delim)
   "Split a line of text separated by 'delim'."
   (let ( (token nil) 
          (tokens nil) 
@@ -199,11 +203,30 @@
            (if (null delim-loc)
                (progn
                  (setf tokens (append (list line) tokens))
-                 (return-from split-line (reverse tokens)))
+                 (return-from split-string (reverse tokens)))
              (progn
                (setf token (subseq line 0 delim-loc))
                (setf tokens (append (list token) tokens))
                (setf line (subseq line (+ 1 delim-loc) (length line))))))))
+
+(defun char-in-string (char string)
+	(position char string))
+
+(defun not-these-chars (char-list word)
+	(let ((pos (loop for c in char-list collect (slip:char-in-string c word))))
+		(every #'null pos)))
+
+(defun word-in-string (word string)
+	(loop for w in (slip:split-string string #\ ) do
+       (if (string-equal w word) (return t))))
+
+(defun last-word (string)
+  (let* ((tokens (slip:split-string string #\ ))
+        (num-tokens (length tokens))
+        (last-word nil))
+    (if (> num-tokens 0)
+        (setf last-word (nth (1- num-tokens) tokens)))
+    last-word))
 
 ;;   [List Functions]
 
@@ -300,7 +323,7 @@
         (flines (slip:file-to-list f)))
     (print flines)
     (dolist (line flines)
-      (setf split (slip:split-line line delim))
+      (setf split (slip:split-string line delim))
       (push (nth (1- col) split) lyst))
     (reverse lyst)))
 
@@ -322,11 +345,11 @@
   (let* ((row 0) (flist (slip:file-to-list fname))
          (nrows (length flist))
          (firstrow (nth 0 flist))
-         (ncols (length (slip:split-line firstrow delim)))
+         (ncols (length (slip:split-string firstrow delim)))
          (farray (make-array (list nrows ncols) :initial-element nil)))
     (loop for line in flist do
          (progn
-           (setf columns (slip:split-line line delim))
+           (setf columns (slip:split-string line delim))
            (loop for col from 0 to (1- ncols) do
                 (setf (aref farray row col) (nth col columns)))
            (incf row)))
@@ -357,7 +380,7 @@
 (defun hash-key (ht key)
   "Test if key is in hash table."
   (not (null (member key
-                     (loop for k being the hash-keys of ht collect k)))))
+       (loop for k being the hash-keys of ht collect k)))))
 
  (defun store-hash (h k v)
    "Store value (v) into hash table (h) using key (k)." 
