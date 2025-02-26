@@ -22,8 +22,8 @@
    :rand-char
                                         ; strings
    :rtrim
-   :startswith
-   :endswith
+   :starts-with
+   :ends-with
    :split-string
 	 :char-in-string
 	 :not-these-chars
@@ -182,16 +182,16 @@
       ; convert back to string and return.
       (coerce tr 'string))))
 
-(defun startswith (sub str)
+(defun starts-with (sub str)
   "Test if a string (str) starts with the substring (sub)."
   (let ((end (length sub)))
     (if (string-equal sub (subseq str 0 end))
         t
         nil)))
 
-(defun endswith (sub str)
+(defun ends-with (sub str)
   "Test if a string (str) ends with the substring (sub)."
-  (slip:startswith (reverse sub) (reverse str)))
+  (slip:starts-with (reverse sub) (reverse str)))
 
 (defun split-string(line delim)
   "Split a line of text separated by 'delim'."
