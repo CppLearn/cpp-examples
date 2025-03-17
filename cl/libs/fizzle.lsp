@@ -10,16 +10,16 @@
 
   ( :export 
    ; constants
-		:+speed-of-light+
-		:+G+
-		:+gravity+
-		:+feet-in-meter+
+    :+speed-of-light+
+    :+G+
+    :+gravity+
+    :+feet-in-meter+
    ; physics
    :time-dilation
    :free-fall
    :disp-free-fall
-	 :earth science
-	 :latlon-xyz
+   :earth science
+   :latlon-xyz
   ))
 
 (in-package fizzle)
@@ -52,21 +52,21 @@
 (defun disp-free-fall (s)
   (format t "~% An object falls ~a meters after ~a seconds." (fizzle:free-fall s) s))
 
-																				; Simplified version of converting lat|lon to xyz points.
-																				; this is based on a Lat/Lon to ECEF coordinate system
+                                        ; Simplified version of converting lat|lon to xyz points.
+                                        ; this is based on a Lat/Lon to ECEF coordinate system
                                         ; but it does not use the Earth's radius or a flattening
                                         ; factor like true ECEF coordinates.
 
 (defun latlon-xyz (latitude longitude)
-	(let* ((lat (moth:deg->rad latitude))
-				 (lon (moth:deg->rad longitude))
-				 (cos_lat (cos lat))
-				 (sin_lat (sin lat))
-				 (cos_lon (cos lon))
-				 (sin_lon (sin lon))
-				 (C (/ 1 (sqrt (+ (expt cos_lat 2) (expt sin_lat 2)))))
-				 (x (* C cos_lat cos_lon))
-				 (y (* C cos_lat sin_lon))
-				 (z (* C sin_lat)))
-		(list x y z)))
+  (let* ((lat (moth:deg->rad latitude))
+         (lon (moth:deg->rad longitude))
+         (cos_lat (cos lat))
+         (sin_lat (sin lat))
+         (cos_lon (cos lon))
+         (sin_lon (sin lon))
+         (C (/ 1 (sqrt (+ (expt cos_lat 2) (expt sin_lat 2)))))
+         (x (* C cos_lat cos_lon))
+         (y (* C cos_lat sin_lon))
+         (z (* C sin_lat)))
+    (list x y z)))
 

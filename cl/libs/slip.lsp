@@ -11,8 +11,8 @@
   ( :export 
                                         ; general
    :hello
-		:blank-line
-	 :puts		
+    :blank-line
+   :puts    
    :dump
    :typewriter-string
    :dot-display
@@ -25,9 +25,9 @@
    :starts-with
    :ends-with
    :split-string
-	 :char-in-string
-	 :not-these-chars
-	 :word-in-string
+   :char-in-string
+   :not-these-chars
+   :word-in-string
    :last-word
                                         ; lists
    :filter
@@ -111,7 +111,7 @@
   (terpri))
 
 (defun puts (var)
-	(format t "~% :: ~a" var))
+  (format t "~% :: ~a" var))
 
 (defun dump (label &rest objs)
   (format t "~% [+] ~a:" label)
@@ -210,14 +210,14 @@
                (setf line (subseq line (+ 1 delim-loc) (length line))))))))
 
 (defun char-in-string (char string)
-	(position char string))
+  (position char string))
 
 (defun not-these-chars (char-list word)
-	(let ((pos (loop for c in char-list collect (slip:char-in-string c word))))
-		(every #'null pos)))
+  (let ((pos (loop for c in char-list collect (slip:char-in-string c word))))
+    (every #'null pos)))
 
 (defun word-in-string (word string)
-	(loop for w in (slip:split-string string #\ ) do
+  (loop for w in (slip:split-string string #\ ) do
        (if (string-equal w word) (return t))))
 
 (defun last-word (string)
@@ -403,15 +403,17 @@
 
 (defun assoc-to-hash (l)
   "Convert an assoc list to a hash table."
-  ;; (defvar items '( (coffee 1.50)
-  ;;                (juice 2.50)
-  ;;                (muffin .75)
-  ;;                (crossaint 3.50) ))
+  ;;
+  ;; (defvar items '( (coffee . 1.50)
+  ;;                (juice . 2.50)
+  ;;                (muffin . .75)
+  ;;                (crossaint . 3.50) ))
+  ;;
   ;; (setf menu (slip:fill-hash items))
 
   (let ( (ht (make-hash-table)) )
   (dolist (item l)
-    (slip:store-hash ht (car item) (cadr item)))
+    (slip:store-hash ht (car item) (cdr item)))
   ht))
 
 (defun list-to-hash (lst)
@@ -558,7 +560,7 @@
 (defvar esc     #\ESC)
 
 (defun color (mesg color)
-  "Print out in red using format statement"
+  "Print out in color using format statement"
   (format t "~% ~c~a" esc color)
   (format t "~A" mesg)
   (format t "~c~a" esc reset))

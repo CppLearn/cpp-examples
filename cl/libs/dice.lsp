@@ -21,9 +21,11 @@
     :stddev-list
     :mean-dev-list
     :assign-probs
+		:random-get-event
     :regression-xy
 		:normal-dist
-		) )
+		
+		))
 
 (in-package dice)
 
@@ -109,6 +111,8 @@
   "Assign random probabilites to a list of events.
    Store probabilities in hash table with event name
    as key."
+
+	(setf *random-state* (make-random-state t))
   (let ((budget 1.0) ; total of probabilities must sum to 1.
         (p 0.0)      ; temp probability for single event.
         (probs (make-hash-table)))
@@ -125,6 +129,38 @@
         (+ (gethash choice probs) p))
       (decf budget p) )
     probs))
+
+(defun percent-to-count (p)
+	(let* ((rounded (format nil "~,2f" p))
+				 (rounded-start (1+ (search "." rounded)))
+				 (rounded-end (length rounded)))
+		(parse-integer (subseq rounded rounded-start rounded-end))))
+
+(defun probs-to-counts(events-ht)
+	"Randomly choose a function stored in a probability hash based on the assigned probability."
+	(let ((copy-ht (make-hash-table)))
+		(loop for k being the hash-keys of events-ht do
+			(slip:store-hash copy-ht k (percent-to-count (gethash k events-ht))))
+		copy-ht))
+
+(defun random-get-event (func-probs-ht)
+	"Randomly run a function stored in a hash-table. 
+   Functions are stored as the keys, 
+   probabilies as the values. see (dice:assign-probs)
+   Likelihood is based on the probability."
+	
+	(setf *random-state* (make-random-state t))
+	(let* ((counts-ht (probs-to-counts func-probs-ht))
+				 (total-points (slip:sum-hash counts-ht))
+				 (rand-index (random total-points))
+				 (event-array (make-array total-points :initial-element nil))
+				 (array-index 0))
+					
+		(loop for k being the hash-keys of counts-ht do
+			(loop for i from 0 to (1- (gethash k counts-ht)) do
+				(setf (aref event-array array-index) k)
+				(incf array-index)))
+		(aref event-array rand-index)))
 
 (defun entropy-hash (h)
   "Compute the entropy of a hash table. 

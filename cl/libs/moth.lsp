@@ -9,33 +9,33 @@
   ( :use :common-lisp :slip )
 
   ( :export
-					; general
+          ; general
     :sgn
-					; conversion
+          ; conversion
     :one-rad
     :deg->rad
-																				; functions
-		:log10
+                                        ; functions
+    :log10
     :fib
-		:fact
-    :est-pi-0		
-																				; linear algebra
-		:dot
-																				; interpolation
+    :fact
+    :est-pi-0   
+                                        ; linear algebra
+    :dot
+                                        ; interpolation
     :mapval
-																				; combinatorics 
+                                        ; combinatorics 
     :permute
     :choose
     :partition
     :a-divides-b
     :greatest-divisor
     :a-congruent-b-mod-c
-																				; predicates
+                                        ; predicates
     :even-p
-		:primep
+    :primep
     :slow-primep
     :sophiep
-		
+    
     ))
 
 (in-package moth)
@@ -55,7 +55,7 @@
 (defun deg->rad (d)
   "Convert radians to degrees."
   (* d one-rad))
-																				; evenp is built-in.
+                                        ; evenp is built-in.
 (defun even-p(n)
   "Predicate to test if number is even."
   (let ((result nil))
@@ -87,11 +87,11 @@
   "Compute number of combinations choosing from n items
    and in order choosing k items from k-list"
   (let ((product 1) (x n))
-																				; make sure k-list adds up to k items.
-		(if (not (= n (reduce #'+ k-list)))
-				(error "~% [ERROR] k-list should add up to n! ~%"))
-		
-		; else continue.
+                                        ; make sure k-list adds up to k items.
+    (if (not (= n (reduce #'+ k-list)))
+        (error "~% [ERROR] k-list should add up to n! ~%"))
+    
+    ; else continue.
 
     (loop for k in k-list do
           (format t "~% computing ~a_C_~a" x k)
@@ -164,10 +164,10 @@
          (ans (truncate (float (+ newpt ostart))))) ans))
 
 (defun dot (a b)
-	"Compute the dot product between vectors (lists) a and b."
-	(if (= (length a) (length b))
-			(reduce #'+ (mapcar #'* a b))
-			(error "size of vectors not equal!")))
+  "Compute the dot product between vectors (lists) a and b."
+  (if (= (length a) (length b))
+      (reduce #'+ (mapcar #'* a b))
+      (error "size of vectors not equal!")))
 
 
 
