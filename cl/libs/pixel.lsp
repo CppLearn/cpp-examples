@@ -75,14 +75,17 @@
 
 (defun launch-server (canvas)
   (progn
-    (format t "~% [*] Launching Python/Pygame graphics server...")
+    (format t "~% [*] Launching Lisp Graphics Server...")
     (format t "~% [*] canvas size: ~a x ~a"
             (first canvas)
             (second canvas))
     (format t "~%~%")
     (defvar args (loop for arg in canvas collect (write-to-string arg)))
     (append args '("&"))
-    (ext:run-program "/home/rick/git/lisp/libs/launch-pixel-server.sh" :arguments args)
+																				; pygame
+																				; (ext:run-program "/home/rick/git/lisp/libs/launch-pixel-server.sh" :arguments args)
+
+    (ext:run-program "/home/rick/git/lisp/libs/launch-raylib-server.sh" :arguments args)
     (sleep 4)))
 
                                         ; -- screen class to handle

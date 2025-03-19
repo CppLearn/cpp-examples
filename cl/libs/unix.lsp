@@ -9,6 +9,7 @@
     :get-args
     :run
                                         ; file system
+		:chdir
     :lart
     :ls
     :get-files
@@ -54,6 +55,9 @@
     output-list))
 
                                         ; file system
+(defun chdir (path)
+	(ext:cd path))
+
 (defun lart ()
   (run "ls" "-lart"))
 
@@ -86,6 +90,19 @@
       (format t "~% : ~a" (read-line fh)))
     (close fh)))
 
+																				; ext:delete-directory
+																				; ext:dir
+																				; ext:probe-directory
+																				; ext:edit-file
+																				; ext:editor-name
+																				; ext:editor-tempfile
+																				; ext:physical-memory
+																				; ext:make-directory
+
+																				; ext:copy-file        
+																				; ext:copy-file-info   
+																				; ext:copy-file-stat    
+
                                         ; file edits
 (defun get-lisp-dir ()
   (let ((lisp-config nil)
@@ -106,10 +123,8 @@
     (run "gedit" args)))
 
                                         ; utilities
-
 (defun date ()
   (run "date" "-d now"))
-
                                         ;(defun ls (path)
 ; (let ((args nil))
 ;   (push "-l" args)    
