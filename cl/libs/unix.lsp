@@ -25,7 +25,10 @@
     
                                         ; sounds
     :play-sound
-    
+																				; misc
+		:figlet
+		:fig
+
     ))
 
 (in-package unix)
@@ -135,5 +138,17 @@
                                         ; sounds
 (defun play-sound (wav)
   (unix:run "aplay" wav))
+
+																				; misc
+(defun figlet (font mesg)
+	(if (probe-file "/usr/bin/figlet")
+			(unix:run "/usr/bin/figlet" (format nil "-f ~a ~a" font mesg))
+																				;
+			(format t "~% [warning] sorry no figlet installed!~%")))
+
+(defun fig (mesg)
+	(let ((figlet-lines (unix:figlet "small" mesg)))
+		(loop for line in (unix:figlet "small" mesg) do (format t "~% ~a" line))))
+
 
 

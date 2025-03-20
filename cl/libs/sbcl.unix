@@ -1,0 +1,38 @@
+
+(defvar *proc*)
+
+(defun create-minecraft-proc ()
+  (let* ((binary "/usr/bin/java")
+    (jar "/home/user/temp/Vanilla 1.8/minecraft.jar")
+    (dir "/home/user/temp/Vanilla 1.8")
+    (args (list "-jar" jar "nogui")))
+    (setf *proc* (sb-ext:run-program binary args :directory dir :wait nil :input :stream :output :stream))))
+
+(defun copy-stream (in out)
+  (loop for line = (read-line in nil nil)
+     while line
+       do (write-line line out)))
+
+(defun get-minecraft-output ()
+  (with-open-stream (proc-stream (process-output *proc*))
+    (with-output-to-string (out)
+      (copy-stream (process-output *proc*) out)))
+
+
+
+
+
+
+
+
+
+(defvar *s* (sb-ext:run-program "/usr/bin/ls" (list "-lart") :output :stream))
+*S*
+
+(format (process-input *cat*) "Hello~%")
+(finish-output (process-input *cat*))
+
+(when (listen (process-output *s*))
+      (read-line (process-output *s*)))
+
+
