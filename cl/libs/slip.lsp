@@ -60,8 +60,10 @@
    :show-hash-type
    :sum-hash
    :stats-hash
-                                        ; built-in test data
-                                        ; to play with.
+																				; bits
+	 :make-bit-array 
+	 :bit-set
+	 :bit-set?
 
    :save-to-file                        ; save/load funcs
    :open-file
@@ -464,6 +466,19 @@
       (format t "~% s (sample):             ~,4f" s)
       (format t "~% z-scores:")
       (slip:show-hash z-scores))))
+
+;; bits
+
+(defun make-bit-array (size)
+	(make-array size :element-type 'bit))
+
+(defun bit-set? (flags bit)
+	(let ((size (1- (length flags))))
+		(equal (aref flags (- size bit)) 1)))
+
+(defun bit-set (flags bit)
+	(let ((size (1- (length flags))))
+		(setf (aref flags (- size bit)) 1)))
 
 ;;   [Load/Save Functions]
 

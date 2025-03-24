@@ -1,13 +1,18 @@
+;; -------------------------------------------------------------------------
+;;  File:    unix.lsp
+;;  Created: Fri Mar 21 21:51:33 2025
+;;  By:      Rick <rick@bee>
+;;  Comment: Library for OS/System calls.
+;; -------------------------------------------------------------------------
 
 (defpackage :unix
 
   ( :use :common-lisp :slip )
-
   ( :export 
-   ; constants
                                         ; OS
     :get-args
     :run
+		:runu   ; experimental with uiop
                                         ; file system
 		:chdir
     :lart
@@ -33,34 +38,11 @@
 
 (in-package unix)
 
-; constants
-
-; (defconstant +speed-of-light+ 299792458) ; speed of light m/s
-
-(defun get-args ()
-  (or 
-   #+CLISP ext:*args*
-   #+SBCL sb-ext:*posix-argv*  
-   #+LISPWORKS system:*line-arguments-list*
-   #+CMU extensions:*command-line-words*
-   nil))
-
-(defun run (cmd args-string)
-  (let ((args (slip:split-string args-string #\ ))
-        (*output-file* "clisp.run.out")
-        (output-list nil))
-
-    (ext:run-program cmd :arguments args
-                         :output *output-file*
-                         :if-output-exists :overwrite)
-    (if (probe-file *output-file*)
-        (setf output-list (slip:file-to-list *output-file* )))
-    output-list))
+#+clisp (load "unix.clisp.lsp")
+#+sbcl (load "unix.sbcl.lsp")
+#+CCL (load "unix.clozure.lsp")
 
                                         ; file system
-(defun chdir (path)
-	(ext:cd path))
-
 (defun lart ()
   (run "ls" "-lart"))
 
@@ -92,20 +74,6 @@
     (loop repeat n do
       (format t "~% : ~a" (read-line fh)))
     (close fh)))
-
-																				; ext:delete-directory
-																				; ext:dir
-																				; ext:probe-directory
-																				; ext:edit-file
-																				; ext:editor-name
-																				; ext:editor-tempfile
-																				; ext:physical-memory
-																				; ext:make-directory
-
-																				; ext:copy-file        
-																				; ext:copy-file-info   
-																				; ext:copy-file-stat    
-
                                         ; file edits
 (defun get-lisp-dir ()
   (let ((lisp-config nil)
@@ -128,12 +96,6 @@
                                         ; utilities
 (defun date ()
   (run "date" "-d now"))
-                                        ;(defun ls (path)
-; (let ((args nil))
-;   (push "-l" args)    
-;   (push path args)
-;   (reverse args)
-;   (ext:run-program "ls" :arguments args)))
 
                                         ; sounds
 (defun play-sound (wav)
