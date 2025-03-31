@@ -44,6 +44,12 @@
     :draw-line
     :draw-circle
     :draw-text
+																				; with world scaling
+		:wdraw-pixel
+		:wdraw-line
+		:wdraw-circle
+		:wdraw-text
+		
     ;;
     ;; -- colors --
     :colors   
@@ -92,7 +98,7 @@
                                         ; -- physical screen resolution.
 (defclass screen ()
   (
-   (x-min  :initarg :xmin   :initform -1 :accessor screen-xmin )
+   (x-min   :initarg :xmin   :initform -1 :accessor screen-xmin )
    (x-max   :initarg :xmax   :initform -1 :accessor screen-xmax )
    (y-min   :initarg :ymin   :initform -1 :accessor screen-ymin )
    (y-max   :initarg :ymax   :initform -1 :accessor screen-ymax )
@@ -104,37 +110,46 @@
 (defun make-screen (xwidth yheight)
   (defvar new-screen
     (make-instance 'screen :xmin 0 :xmax xwidth :ymin 0 :ymax yheight))
+	
   (setf (screen-xrange new-screen) (- (screen-xmax new-screen)
                                       (screen-xmin new-screen)))
   (setf (screen-yrange new-screen) (- (screen-ymax new-screen)
                                       (screen-ymin new-screen)))
   new-screen)
 
+
                                         ; -- world class to handle
                                         ; -- world coordinates.
 (defclass world ()
   (
-   (x-min   :initarg :xmin   :initform -1 :accessor world-xmin )
-   (x-max   :initarg :xmax   :initform -1 :accessor world-xmax )
-   (y-min   :initarg :ymin   :initform -1 :accessor world-ymin )
-   (y-max   :initarg :ymax   :initform -1 :accessor world-ymax )
-   (x-range :initarg :xrange :initform -1 :accessor world-xrange )
-   (y-range :initarg :yrange :initform -1 :accessor world-yrange ))
+   (x-min   :initarg :xmin   :initform -1  :accessor world-xmin )
+   (x-max   :initarg :xmax   :initform -1  :accessor world-xmax )
+   (y-min   :initarg :ymin   :initform -1  :accessor world-ymin )
+   (y-max   :initarg :ymax   :initform -1  :accessor world-ymax )
+   (x-range :initarg :xrange :initform -1  :accessor world-xrange )
+   (y-range :initarg :yrange :initform -1  :accessor world-yrange )
+	 (screen                   :initform nil :accessor world-screen))
   (:documentation "A world class to handle world properties."))
 
-(defun make-world (xmin xmax ymin ymax)
+;; (defun dwarf (n &key weight gamma) 
+       (format t "~% n = ~a, weight = ~a, gamma = ~a" n weight gamma))
+
+
+(defun make-world (xmin xmax ymin ymax &key screen)
   (defvar new-world
     (make-instance 'world :xmin xmin
                           :xmax xmax
                           :ymin ymin
-                          :ymax ymax))
+                          :ymax ymax
+													:screen screen))
+
   (setf (world-xrange new-world) (- (world-xmax new-world)
                                     (world-xmin new-world)))
   (setf (world-yrange new-world) (- (world-ymax new-world)
                                     (world-ymin new-world)))
   new-world)
 
-(defun get-scale-x (w s)
+(defun get-scale-x (w)
   "Return function that computes world to screen transform: x coord"  
   (lambda (x)
     (let* ((dist-to-x-min (abs (- (world-xmin w)
@@ -142,10 +157,10 @@
            (dist-x-ratio (float (/ dist-to-x-min
                                    (world-xrange w))))
            (canvas-x (round (* dist-x-ratio
-                               (screen-xrange s)))))
+                               (screen-xrange (world-screen w) )))))
       canvas-x)))
 
-(defun get-scale-y (w s)
+(defun get-scale-y (w)
   "Return function that computes world to screen transform: y coord"  
   (lambda (y)
     (let* ((dist-to-y-min (abs (- (world-ymin w)
@@ -153,7 +168,7 @@
            (dist-y-ratio (float (/ dist-to-y-min
                                    (world-yrange w))))
            (canvas-y (round (* dist-y-ratio
-                               (screen-yrange s)))))
+                               (screen-yrange (world-screen w) )))))
       canvas-y)))
 
 (defun init (s)
@@ -163,6 +178,22 @@
                          (screen-ymax s)))
     (format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
     (defvar *pixel-stream* (ext:socket-connect *socket* *ip*))))
+
+
+
+(defvar world-screen-x (pixel:get-scale-x world screen))
+(defvar world-screen-y (pixel:get-scale-y world screen))
+
+(defun scale-x (x)
+  (funcall world-screen-x x))
+(defun scale-y (y)
+  (funcall world-screen-y y))                                      
+
+
+
+
+
+
 
 (defun shutdown ()
   (close *pixel-stream*))
@@ -202,6 +233,27 @@
                      (svref color 1)
                      (svref color 2)))
   (print mesg *pixel-stream*))
+
+
+
+
+(defmacro wdraw-pixel (x y color)
+	`(draw-pixel (cl-user:scale-x ,x) (cl-user:scale-y ,y) ,color))
+
+(defmacro wdraw-line (x1 y1 x2 y2 color)
+	`(draw-line (cl-user:scale-x ,x1) (cl-user:scale-y ,y1) (cl-user:scale-x ,x2) (cl-user:scale-y ,y2) ,color))
+
+(defmacro wdraw-circle (x y radius width color)
+	`(draw-circle (cl-user:scale-x ,x) (cl-user:scale-y ,y1) ,radius ,width ,color))
+
+(defmacro wdraw-text (text x y color)
+	`(draw-text (text (cl-user:scale-x ,x) (cl-user:scale-y ,y) ,color)))
+
+
+
+
+
+
 
 
 

@@ -32,7 +32,9 @@
     :play-sound
 																				; misc
 		:figlet
+		:mac-figlet
 		:fig
+		:mac-fig
 
     ))
 
@@ -53,13 +55,16 @@
 (defun get-files ()
   (let ((dir-entries (run "ls" "-l")))
     (loop for e in dir-entries if (and
+																	 (> (length e) 0)
                                    (not (slip:starts-with "d" e))
                                    (not (slip:starts-with "total" e)))
           collect (slip:last-word e))))
 
 (defun get-dirs ()
   (let ((dir-entries (run "ls" "-l")))
-    (loop for e in dir-entries if (slip:starts-with "d" e)
+    (loop for e in dir-entries if (and
+																	 (> (length e) 0)
+																	 (slip:starts-with "d" e))
           collect (slip:last-word e))))
 
 (defun files ()
@@ -111,6 +116,14 @@
 (defun fig (mesg)
 	(let ((figlet-lines (unix:figlet "small" mesg)))
 		(loop for line in (unix:figlet "small" mesg) do (format t "~% ~a" line))))
+
+(defun mac-figlet (mesg)
+	(let ((args (format nil "~a" mesg)))
+		(unix:run "figlet" args)))
+
+(defun mac-fig (mesg)
+	(loop for line in (unix:mac-figlet mesg) do
+		(format t "~% ~a" line)))
 
 
 
