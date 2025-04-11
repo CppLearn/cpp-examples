@@ -21,6 +21,7 @@
     :files
     :get-dirs
     :peek-file
+		:join-path
     :rm-ext
                                         ; file edits
     :gedit-file
@@ -79,6 +80,11 @@
     (loop repeat n do
       (format t "~% : ~a" (read-line fh)))
     (close fh)))
+
+(defun join-path (p1 p2)
+	(let ((new-path (concatenate 'string p1 "/" p2)))
+		new-path))
+
                                         ; file edits
 (defun get-lisp-dir ()
   (let ((lisp-config nil)

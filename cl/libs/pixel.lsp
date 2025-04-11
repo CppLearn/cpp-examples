@@ -12,28 +12,14 @@
     ;;
     ;; -- screen --
     :screen
-    :screen-xmin
-    :screen-xmax
-    :screen-ymin 
-    :screen-ymax 
-    :screen-xrange 
-    :screen-yrange
-    :make-screen
+    :build-screen
     ;;
     ;; -- world --
     :world
-    :world-xmin
-    :world-xmax
-    :world-ymin 
-    :world-ymax 
-    :world-xrange 
-    :world-yrange
-    :make-world
-                                        ;
-                                        ;
-    :get-scale-x
-    :get-scale-y
-                                        ;
+    :build-world
+		;; -- graphics context --
+		:gc
+		:build-gc
                                         ;
     :init
     :shutdown
@@ -79,6 +65,9 @@
 
 (defvar colors '(*black* *white* *red* *green* *blue* *yellow* *cyan* *magenta*))
 
+;; (defun dwarf (n &key weight gamma) 
+;;     (format t "~% n = ~a, weight = ~a, gamma = ~a" n weight gamma))
+
 (defun launch-server (canvas)
   (progn
     (format t "~% [*] Launching Lisp Graphics Server...")
@@ -96,134 +85,154 @@
 
                                         ; -- screen class to handle
                                         ; -- physical screen resolution.
-(defclass screen ()
-  (
-   (x-min   :initarg :xmin   :initform -1 :accessor screen-xmin )
-   (x-max   :initarg :xmax   :initform -1 :accessor screen-xmax )
-   (y-min   :initarg :ymin   :initform -1 :accessor screen-ymin )
-   (y-max   :initarg :ymax   :initform -1 :accessor screen-ymax )
-   (x-range :initarg :xrange :initform -1 :accessor screen-xrange )
-   (y-range :initarg :yrange :initform -1 :accessor screen-yrange ))
-  (:documentation "A screen class to handle screen properties."))
 
+(defstruct screen
+	"Stores screen dimensions."
+	x-min
+	x-max
+	y-min
+	y-max
+	(x-range 0)
+	(y-range 0))
 
-(defun make-screen (xwidth yheight)
-  (defvar new-screen
-    (make-instance 'screen :xmin 0 :xmax xwidth :ymin 0 :ymax yheight))
-	
-  (setf (screen-xrange new-screen) (- (screen-xmax new-screen)
-                                      (screen-xmin new-screen)))
-  (setf (screen-yrange new-screen) (- (screen-ymax new-screen)
-                                      (screen-ymin new-screen)))
+(defun build-screen (width height)
+  (defvar new-screen (make-screen :x-min 0 :x-max width :y-min 0 :y-max height))
+  (setf (screen-x-range new-screen) (- (screen-x-max new-screen)
+                                      (screen-x-min new-screen)))
+  (setf (screen-y-range new-screen) (- (screen-y-max new-screen)
+                                      (screen-y-min new-screen)))
   new-screen)
 
-
-                                        ; -- world class to handle
+                                        ; -- world to handle
                                         ; -- world coordinates.
-(defclass world ()
-  (
-   (x-min   :initarg :xmin   :initform -1  :accessor world-xmin )
-   (x-max   :initarg :xmax   :initform -1  :accessor world-xmax )
-   (y-min   :initarg :ymin   :initform -1  :accessor world-ymin )
-   (y-max   :initarg :ymax   :initform -1  :accessor world-ymax )
-   (x-range :initarg :xrange :initform -1  :accessor world-xrange )
-   (y-range :initarg :yrange :initform -1  :accessor world-yrange )
-	 (screen                   :initform nil :accessor world-screen))
-  (:documentation "A world class to handle world properties."))
 
-;; (defun dwarf (n &key weight gamma) 
-       (format t "~% n = ~a, weight = ~a, gamma = ~a" n weight gamma))
+(defstruct world
+	"Stores world coordinates."
+	x-min
+	x-max
+	y-min
+	y-max
+	(x-range 0)
+	(y-range 0))
 
-
-(defun make-world (xmin xmax ymin ymax &key screen)
-  (defvar new-world
-    (make-instance 'world :xmin xmin
-                          :xmax xmax
-                          :ymin ymin
-                          :ymax ymax
-													:screen screen))
-
-  (setf (world-xrange new-world) (- (world-xmax new-world)
-                                    (world-xmin new-world)))
-  (setf (world-yrange new-world) (- (world-ymax new-world)
-                                    (world-ymin new-world)))
+(defun build-world (xmin xmax ymin ymax)
+	(defvar new-world (make-world :x-min xmin :x-max xmax :y-min ymin :y-max ymax))
+  (setf (world-x-range new-world) (- (world-x-max new-world)
+                                    (world-x-min new-world)))
+  (setf (world-y-range new-world) (- (world-y-max new-world)
+                                    (world-y-min new-world)))
   new-world)
 
-(defun get-scale-x (w)
+(defun get-scale-x (s w)
   "Return function that computes world to screen transform: x coord"  
   (lambda (x)
-    (let* ((dist-to-x-min (abs (- (world-xmin w)
+    (let* ((dist-to-x-min (abs (- (world-x-min w)
                                   x)))
            (dist-x-ratio (float (/ dist-to-x-min
-                                   (world-xrange w))))
+                                   (world-x-range w))))
            (canvas-x (round (* dist-x-ratio
-                               (screen-xrange (world-screen w) )))))
+                               (screen-x-range s)))))
       canvas-x)))
 
-(defun get-scale-y (w)
+(defun get-scale-y (s w)
   "Return function that computes world to screen transform: y coord"  
   (lambda (y)
-    (let* ((dist-to-y-min (abs (- (world-ymin w)
+    (let* ((dist-to-y-min (abs (- (world-y-min w)
                                   y)))
            (dist-y-ratio (float (/ dist-to-y-min
-                                   (world-yrange w))))
+                                   (world-y-range w))))
            (canvas-y (round (* dist-y-ratio
-                               (screen-yrange (world-screen w) )))))
+                               (screen-y-range s)))))
       canvas-y)))
 
-(defun init (s)
+(defstruct gc
+	"Graphics Controller."
+	screen
+	world
+	scale-x
+	scale-y)
+
+(defun build-gc (s w)
+	(defvar gc (make-gc :screen s :world w))
+	(setf (gc-scale-x gc) (get-scale-x s w))
+	(setf (gc-scale-y gc) (get-scale-y s w))
+	gc)
+
+(defun init (gc)
   "Initialize graphics with screen s"
   (progn
-    (launch-server (list (screen-xmax s)
-                         (screen-ymax s)))
-    (format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
-    (defvar *pixel-stream* (ext:socket-connect *socket* *ip*))))
-
-
-
-(defvar world-screen-x (pixel:get-scale-x world screen))
-(defvar world-screen-y (pixel:get-scale-y world screen))
-
-(defun scale-x (x)
-  (funcall world-screen-x x))
-(defun scale-y (y)
-  (funcall world-screen-y y))                                      
-
-
-
-
-
-
+    (launch-server (list (screen-x-max
+													(gc-screen gc))
+                         (screen-y-max
+													(gc-screen gc)))))
+													
+  (format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
+  (defvar *pixel-stream* (ext:socket-connect *socket* *ip*)))
 
 (defun shutdown ()
   (close *pixel-stream*))
 
+
+; //  ---------------------------------------------------------------  //
+; //  pixel                                                            //
+; //  ---------------------------------------------------------------  //
+
 (defun draw-pixel (x y color)
   (setf mesg (format nil "{ PIXEL ~a ~a ~a ~a ~a }"
-         x y
-         (svref color 0)
-         (svref color 1)
-         (svref color 2)
-         ))
+										 x y
+										 (svref color 0)
+										 (svref color 1)
+										 (svref color 2)
+										 ))
   (print mesg *pixel-stream*))
+
+(defmacro wdraw-pixel (px1 py1 color)
+	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
+				 (y1 (funcall (gc-scale-y gc) ,py1)))
+		 (pixel:draw-pixel x1 y1 ,color)))
+
+; //  ---------------------------------------------------------------  //
+; //  line                                                             //
+; //  ---------------------------------------------------------------  //
 
 (defun draw-line (x1 y1 x2 y2 color)
   (setf mesg (format nil "{ LINE ~a ~a ~a ~a ~a ~a ~a }"
-         x1 y1 x2 y2
-         (svref color 0)
-         (svref color 1)
-         (svref color 2)))  
+										 x1 y1 x2 y2
+										 (svref color 0)
+										 (svref color 1)
+										 (svref color 2)))  
   (print mesg *pixel-stream*))
 
-(defun draw-circle (x y radius width color)
-  (setf mesg (format nil "{ CIRCLE ~a ~a ~a ~a ~a ~a ~a }"
-         x y
-         radius
-         width
-         (svref color 0)
-         (svref color 1)
-         (svref color 2)))
+(defmacro wdraw-line (px1 py1 px2 py2 color)
+	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
+				 (x2 (funcall (gc-scale-x gc) ,px2))
+				 (y1 (funcall (gc-scale-y gc) ,py1))
+				 (y2 (funcall (gc-scale-y gc) ,py2)))
+		 (format t "~% line: ~a ~a ~a ~a" x1 y1 x2 y2)
+		 (pixel:draw-line x1 y1 x2 y2 ,color)))
+
+
+; //  ---------------------------------------------------------------  //
+; //  circle                                                           //
+; //  ---------------------------------------------------------------  //
+
+(defun draw-circle (x y radius color)
+  (setf mesg (format nil "{ CIRCLE ~a ~a ~a ~a ~a ~a }"
+										 x y
+										 radius
+										 (svref color 0)
+										 (svref color 1)
+										 (svref color 2)))
   (print mesg *pixel-stream*))
+
+(defmacro wdraw-circle (px1 py1 radius color)
+	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
+				 (y1 (funcall (gc-scale-y gc) ,py1)))
+		 (pixel:draw-circle x1 y1 ,radius ,color)))
+
+; //  ---------------------------------------------------------------  //
+; //  text                                                             //
+; //  ---------------------------------------------------------------  //
 
 (defun draw-text (text x y color)
   (setf mesg (format nil "{ TEXT ~a ~a ~a ~a ~a ~a }"
@@ -234,42 +243,8 @@
                      (svref color 2)))
   (print mesg *pixel-stream*))
 
-
-
-
-(defmacro wdraw-pixel (x y color)
-	`(draw-pixel (cl-user:scale-x ,x) (cl-user:scale-y ,y) ,color))
-
-(defmacro wdraw-line (x1 y1 x2 y2 color)
-	`(draw-line (cl-user:scale-x ,x1) (cl-user:scale-y ,y1) (cl-user:scale-x ,x2) (cl-user:scale-y ,y2) ,color))
-
-(defmacro wdraw-circle (x y radius width color)
-	`(draw-circle (cl-user:scale-x ,x) (cl-user:scale-y ,y1) ,radius ,width ,color))
-
-(defmacro wdraw-text (text x y color)
-	`(draw-text (text (cl-user:scale-x ,x) (cl-user:scale-y ,y) ,color)))
-
-
-
-
-
-
-
-
-
-;; def world_to_canvas_x(self, x):
-        
-;;         dist_to_x_min = abs(self.world_x_min - x)
-;;         dist_x_ratio = float(dist_to_x_min) / float(self.world_width)
-;;         canvas_x = int(round(dist_x_ratio * self.canvas_width))
-
-;;         return canvas_x
-
-;;     def world_to_canvas_y(self, y):
-        
-;;         dist_to_y_min = abs(self.world_y_min - y)
-;;         dist_y_ratio = float(dist_to_y_min) / float(self.world_height)
-;;         canvas_y = int(round(dist_y_ratio * self.canvas_height))
-
-;;         return canvas_y
+(defmacro wdraw-text (text px1 py1 color)
+	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
+				 (y1 (funcall (gc-scale-y gc) ,py1)))
+		 (pixel:draw-text ,text x1 y1 ,color)))
 

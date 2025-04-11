@@ -51,6 +51,9 @@
    :matrix-to-file
                                         ; arrays
    :extract-column
+
+																				; structs
+	 :magic-struct
                                         ; hash funcs
    :hash-key
    :store-hash
@@ -376,6 +379,13 @@
     (loop for r from 0 to (1- nrows) do
          (push (aref matrix r col-n) col-list))
     (reverse col-list)))
+
+;;   [Struct Functions]
+
+(defun magic-struct (struct-name fields-list)
+	(let ((struct-string))
+		(setf struct-string (format nil "(defstruct ~a ~{~a ~})" struct-name fields-list))
+		(eval (read-from-string struct-string))))
 
 ;;   [Hash Table Functions]
 
