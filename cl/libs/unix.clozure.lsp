@@ -7,7 +7,7 @@
 
 (require "asdf")
 
-(defun run (cmd args-string)
+(defun run-internal (cmd args-string)
 	(let* ((output (uiop:run-program (append (list cmd) (list args-string)) :output :string))
 				 (output-list (slip:split-string output #\Newline)))
 		output-list))

@@ -11,7 +11,7 @@
   ( :export 
                                         ; general
    :hello
-    :blank-line
+   :blank-line
    :puts    
    :dump
    :typewriter-string
@@ -24,6 +24,7 @@
    :rtrim
    :starts-with
    :ends-with
+   :join-strings
    :split-string
    :char-in-string
    :not-these-chars
@@ -52,8 +53,8 @@
                                         ; arrays
    :extract-column
 
-																				; structs
-	 :magic-struct
+                                        ; structs
+   :magic-struct
                                         ; hash funcs
    :hash-key
    :store-hash
@@ -63,10 +64,10 @@
    :show-hash-type
    :sum-hash
    :stats-hash
-																				; bits
-	 :make-bit-array 
-	 :bit-set
-	 :bit-set?
+                                        ; bits
+   :make-bit-array 
+   :bit-set
+   :bit-set?
 
    :save-to-file                        ; save/load funcs
    :open-file
@@ -197,6 +198,16 @@
 (defun ends-with (sub str)
   "Test if a string (str) ends with the substring (sub)."
   (slip:starts-with (reverse sub) (reverse str)))
+
+(defun join-strings (string-list)
+  "Joins a list of strings into single string."
+	(let ((one-string "")
+				(last-string (1- (length string-list))))
+		(loop for i from 0 to last-string do
+			(setf one-string (concatenate 'string one-string (nth i string-list)))
+			(if (< i last-string)
+					(setf one-string (concatenate 'string one-string " "))))
+		one-string))
 
 (defun split-string(line delim)
   "Split a line of text separated by 'delim'."
@@ -383,9 +394,9 @@
 ;;   [Struct Functions]
 
 (defun magic-struct (struct-name fields-list)
-	(let ((struct-string))
-		(setf struct-string (format nil "(defstruct ~a ~{~a ~})" struct-name fields-list))
-		(eval (read-from-string struct-string))))
+  (let ((struct-string))
+    (setf struct-string (format nil "(defstruct ~a ~{~a ~})" struct-name fields-list))
+    (eval (read-from-string struct-string))))
 
 ;;   [Hash Table Functions]
 
@@ -480,15 +491,15 @@
 ;; bits
 
 (defun make-bit-array (size)
-	(make-array size :element-type 'bit))
+  (make-array size :element-type 'bit))
 
 (defun bit-set? (flags bit)
-	(let ((size (1- (length flags))))
-		(equal (aref flags (- size bit)) 1)))
+  (let ((size (1- (length flags))))
+    (equal (aref flags (- size bit)) 1)))
 
 (defun bit-set (flags bit)
-	(let ((size (1- (length flags))))
-		(setf (aref flags (- size bit)) 1)))
+  (let ((size (1- (length flags))))
+    (setf (aref flags (- size bit)) 1)))
 
 ;;   [Load/Save Functions]
 

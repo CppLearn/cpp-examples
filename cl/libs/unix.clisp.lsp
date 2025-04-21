@@ -8,7 +8,7 @@
 (defun get-args ()
 	ext:*args*)
 
-(defun run (cmd args-string)
+(defun run-internal (cmd args-string)
   (let ((args (slip:split-string args-string #\ ))
         (*output-file* "clisp.run.out")
         (output-list nil))
