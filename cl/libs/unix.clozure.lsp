@@ -8,8 +8,12 @@
 (require "asdf")
 
 (defun run-internal (cmd args-string)
-	(let* ((output (uiop:run-program (append (list cmd) (list args-string)) :output :string))
-				 (output-list (slip:split-string output #\Newline)))
+	(let ((full-cmd (concatenate 'string cmd " " args-string))
+				(output nil)
+				(output-list nil))
+		(setf output (uiop:run-program full-cmd :output :string))
+		(setf output-list (slip:split-string output #\Newline))
 		output-list))
+
 
 
