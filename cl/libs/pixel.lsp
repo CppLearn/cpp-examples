@@ -18,9 +18,7 @@
     :world
     :build-world
 		;; -- graphics context --
-		:gc
 		:build-gc
-                                        ;
     :init
     :shutdown
     ;;
@@ -158,16 +156,27 @@
 	(setf (gc-scale-y gc) (get-scale-y s w))
 	gc)
 
-(defun init (gc)
+(defun create-gc (&key (screen nil) (world nil))
+	(let ((gc nil)
+				(screen-width (car screen))
+				 (screen-height (cadr screen))
+				 (world-min (car world))
+				(world-max (cadr world)))
+		(format t "~% [*] Pixel: creating grahics context...")
+		(setf gc (pixel:build-gc
+							(pixel:build-screen screen-width screen-height)
+							(pixel:build-world  world-min world-max world-min world-max)))
+		gc))
+
+(defun init (&key (screen nil) (world nil))
   "Initialize graphics with screen s"
-  (progn
-    (launch-server (list (screen-x-max
+	(let ((gc (create-gc :screen screen :world world)))
+		(launch-server (list (screen-x-max
 													(gc-screen gc))
-                         (screen-y-max
-													(gc-screen gc)))))
-													
-  (format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
-  (defvar *pixel-stream* (ext:socket-connect *socket* *ip*)))
+												 (screen-y-max
+													(gc-screen gc))))
+		(format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
+		(defvar *pixel-stream* (ext:socket-connect *socket* *ip*))))
 
 (defun shutdown ()
   (close *pixel-stream*))
@@ -208,7 +217,6 @@
 				 (x2 (funcall (gc-scale-x gc) ,px2))
 				 (y1 (funcall (gc-scale-y gc) ,py1))
 				 (y2 (funcall (gc-scale-y gc) ,py2)))
-		 (format t "~% line: ~a ~a ~a ~a" x1 y1 x2 y2)
 		 (pixel:draw-line x1 y1 x2 y2 ,color)))
 
 
