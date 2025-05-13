@@ -36,7 +36,7 @@
     :slow-primep
     :sophiep
     
-    ))
+    )) ; end package
 
 (in-package moth)
 

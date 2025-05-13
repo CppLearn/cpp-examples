@@ -6,12 +6,12 @@
 
 (defpackage :dice
 
-  ( :use :common-lisp :slip )
+  ( :use :common-lisp :slip :moth )
 
   ( :export
 		:rand-int
 		:rand-string
-    :binomial-trial
+    :bin-trial
     :poisson
     :repeats
     :entropy-hash
@@ -44,7 +44,7 @@
 								rstring)))
 		(coerce rstring 'string)))
 
-(defun binomial-trial(n x p &optional (verbose nil))
+(defun bin-trial(n x p &optional (verbose nil))
   "Compute probability of x out of n trials succeeding 
    given probability p of success for each trial."
   (let ((probability

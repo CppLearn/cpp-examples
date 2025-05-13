@@ -11,7 +11,8 @@
   ( :export 
                                         ; general
    :hello
-   :blank-line
+	 :blank-line
+	 :bin-dir
    :puts    
    :dump
    :typewriter-string
@@ -115,6 +116,9 @@
 (defun blank-line ()
   (fresh-line)
   (terpri))
+
+(defun bin-dir ()
+	(concatenate 'string (format nil "~a" (user-homedir-pathname)) "bin/"))
 
 (defun puts (var)
   (format t "~% :: ~a" var))

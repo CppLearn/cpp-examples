@@ -41,9 +41,9 @@
 
 (in-package unix)
 
-#+clisp (load "unix.clisp.lsp")
-#+sbcl (load "unix.sbcl.lsp")
-#+CCL (load "unix.clozure.lsp")
+#+clisp (load "/home/rick/git/lisp/libs/unix.clisp.lsp")
+#+sbcl (load "/home/rick/git/lisp/libs/unix.sbcl.lsp")
+#+CCL (load "/home/rick/git/lisp/libs/unix.clozure.lsp")
 
 																				; processes
 (defun run (cmd &optional (args nil))
