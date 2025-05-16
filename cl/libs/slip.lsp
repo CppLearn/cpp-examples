@@ -73,8 +73,10 @@
    :save-to-file                        ; save/load funcs
    :open-file
    :read-objects
-   
-   :creature-list
+
+		:emoji
+		:emojis
+		:creature-list
    :color
                                         ; colors
    :black
@@ -604,4 +606,17 @@
   (format t "~% ~c~a" esc color)
   (format t "~A" mesg)
   (format t "~c~a" esc reset))
+
+
+(defvar emojis (make-hash-table))
+(setf (gethash 'smiley emojis) 128512)
+(setf (gethash 'cat emojis) 128568)
+(setf (gethash 'unicorn emojis) 129412)
+
+(defun emoji (emoji-name)
+	(code-char (gethash emoji-name slip:emojis)))
+
+
+
+
 
