@@ -74,9 +74,16 @@
    :open-file
    :read-objects
 
-		:emoji
-		:emojis
-		:creature-list
+	 :emoji                               ; emojis
+	 :emojis
+	 :emoji-keys
+	 :one-emoji
+		:emoji-objects
+
+																				; other data
+		:populate-countries
+	 
+	 :creature-list
    :color
                                         ; colors
    :black
@@ -893,6 +900,203 @@
 (setf (gethash "superhero" emojis) 129464)
 (setf (gethash "mage" emojis) 129497)
 
+(defun emoji-keys ()
+	(loop for k being the hash-keys of slip:emojis collect k))
+
 (defun emoji (emoji-name)
 	(code-char (gethash emoji-name slip:emojis)))
+
+(defun one-emoji (emoji-name)
+	(format t "~A" (slip:emoji emoji-name)))
+
+(defconstant emoji-objects '("wine glass" 
+														 "tumbler glass"
+														 "bicycle"
+														 "world map"
+														 "compass"
+														 "watch"
+														 "mobile phone"
+														 "laptop"
+														 "keyboard"
+														 "printer"
+														 "computer mouse"
+														 "joystick"
+														 "money bag"
+														 "dollar"
+														 "credit card"
+														 "gem"
+														 "tools"
+														 "hammer"
+														 "wrench"
+														 "gear"
+														 "lock"
+														 "unlock"
+														 "key"
+														 "bulb"
+														 "flashlight"
+														 "battery"
+														 "pill"
+														 "syringe"
+														 "test tube"
+														 "microscope"
+														 "telescope"))
+
+;; Hash table of the top 100 most populous countries
+;; Key: country name (string),
+;; Value: population in engineering notation (rounded to nearest million)
+
+(defun populate-countries ()
+	"This will create the hash-table, populate the countries at run-time and return 
+   the hash-table that way we don't populate it while loading the package."
+
+	(let ((countries (make-hash-table :test 'equal)))
+	
+		;; Top 100 countries by population (2024/2025 data)
+		(setf (gethash "India" countries) 1.428e9)         ; 1,428 million
+		(setf (gethash "China" countries) 1.413e9)         ; 1,413 million  
+		(setf (gethash "United States" countries) 343e6)   ; 343 million
+		(setf (gethash "Indonesia" countries) 278e6)       ; 278 million
+		(setf (gethash "Pakistan" countries) 241e6)        ; 241 million
+		(setf (gethash "Nigeria" countries) 230e6)         ; 230 million
+		(setf (gethash "Brazil" countries) 217e6)          ; 217 million
+		(setf (gethash "Bangladesh" countries) 173e6)      ; 173 million
+		(setf (gethash "Russia" countries) 144e6)          ; 144 million
+		(setf (gethash "Mexico" countries) 129e6)          ; 129 million
+		(setf (gethash "Ethiopia" countries) 132e6)        ; 132 million
+		(setf (gethash "Japan" countries) 123e6)           ; 123 million
+		(setf (gethash "Philippines" countries) 118e6)     ; 118 million
+		(setf (gethash "Egypt" countries) 113e6)           ; 113 million
+		(setf (gethash "Vietnam" countries) 99e6)          ; 99 million
+		(setf (gethash "Iran" countries) 87e6)             ; 87 million
+		(setf (gethash "Turkey" countries) 86e6)           ; 86 million
+		(setf (gethash "Germany" countries) 84e6)          ; 84 million
+		(setf (gethash "Thailand" countries) 72e6)         ; 72 million
+		(setf (gethash "United Kingdom" countries) 69e6)   ; 69 million
+		(setf (gethash "France" countries) 69e6)           ; 69 million
+		(setf (gethash "Tanzania" countries) 68e6)         ; 68 million
+		(setf (gethash "South Africa" countries) 63e6)     ; 63 million
+		(setf (gethash "Italy" countries) 59e6)            ; 59 million
+		(setf (gethash "Kenya" countries) 56e6)            ; 56 million
+		(setf (gethash "South Korea" countries) 52e6)      ; 52 million
+		(setf (gethash "Colombia" countries) 52e6)         ; 52 million
+		(setf (gethash "Myanmar" countries) 51e6)          ; 51 million
+		(setf (gethash "Sudan" countries) 49e6)            ; 49 million
+		(setf (gethash "Spain" countries) 48e6)            ; 48 million
+		(setf (gethash "Uganda" countries) 48e6)           ; 48 million
+		(setf (gethash "Argentina" countries) 46e6)        ; 46 million
+		(setf (gethash "Algeria" countries) 46e6)          ; 46 million
+		(setf (gethash "Iraq" countries) 46e6)             ; 46 million
+		(setf (gethash "Afghanistan" countries) 42e6)      ; 42 million
+		(setf (gethash "Canada" countries) 40e6)           ; 40 million
+		(setf (gethash "Morocco" countries) 38e6)          ; 38 million
+		(setf (gethash "Ukraine" countries) 37e6)          ; 37 million
+		(setf (gethash "Poland" countries) 37e6)           ; 37 million
+		(setf (gethash "Angola" countries) 37e6)           ; 37 million
+		(setf (gethash "Saudi Arabia" countries) 36e6)     ; 36 million
+		(setf (gethash "Uzbekistan" countries) 36e6)       ; 36 million
+		(setf (gethash "Yemen" countries) 35e6)            ; 35 million
+		(setf (gethash "Peru" countries) 34e6)             ; 34 million
+		(setf (gethash "Malaysia" countries) 34e6)         ; 34 million
+		(setf (gethash "Ghana" countries) 34e6)            ; 34 million
+		(setf (gethash "Mozambique" countries) 33e6)       ; 33 million
+		(setf (gethash "Madagascar" countries) 31e6)       ; 31 million
+		(setf (gethash "Nepal" countries) 30e6)            ; 30 million
+		(setf (gethash "Venezuela" countries) 29e6)        ; 29 million
+		(setf (gethash "Ivory Coast" countries) 29e6)      ; 29 million
+		(setf (gethash "Cameroon" countries) 28e6)         ; 28 million
+		(setf (gethash "Niger" countries) 27e6)            ; 27 million
+		(setf (gethash "Australia" countries) 26e6)        ; 26 million
+		(setf (gethash "North Korea" countries) 26e6)      ; 26 million
+		(setf (gethash "Taiwan" countries) 23e6)           ; 23 million
+		(setf (gethash "Mali" countries) 23e6)             ; 23 million
+		(setf (gethash "Burkina Faso" countries) 23e6)     ; 23 million
+		(setf (gethash "Sri Lanka" countries) 22e6)        ; 22 million
+		(setf (gethash "Malawi" countries) 21e6)           ; 21 million
+		(setf (gethash "Kazakhstan" countries) 20e6)       ; 20 million
+		(setf (gethash "Chile" countries) 20e6)            ; 20 million
+		(setf (gethash "Zambia" countries) 20e6)           ; 20 million
+		(setf (gethash "Romania" countries) 19e6)          ; 19 million
+		(setf (gethash "Somalia" countries) 18e6)          ; 18 million
+		(setf (gethash "Senegal" countries) 18e6)          ; 18 million
+		(setf (gethash "Netherlands" countries) 18e6)      ; 18 million
+		(setf (gethash "Chad" countries) 18e6)             ; 18 million
+		(setf (gethash "Guatemala" countries) 18e6)        ; 18 million
+		(setf (gethash "Zimbabwe" countries) 16e6)         ; 16 million
+		(setf (gethash "Cambodia" countries) 17e6)         ; 17 million
+		(setf (gethash "South Sudan" countries) 11e6)      ; 11 million
+		(setf (gethash "Ecuador" countries) 18e6)          ; 18 million
+		(setf (gethash "Guinea" countries) 14e6)           ; 14 million
+		(setf (gethash "Rwanda" countries) 14e6)           ; 14 million
+		(setf (gethash "Benin" countries) 13e6)            ; 13 million
+		(setf (gethash "Burundi" countries) 13e6)          ; 13 million
+		(setf (gethash "Tunisia" countries) 12e6)          ; 12 million
+		(setf (gethash "Bolivia" countries) 12e6)          ; 12 million
+		(setf (gethash "Belgium" countries) 12e6)          ; 12 million
+		(setf (gethash "Haiti" countries) 12e6)            ; 12 million
+		(setf (gethash "Cuba" countries) 11e6)             ; 11 million
+		(setf (gethash "Dominican Republic" countries) 11e6) ; 11 million
+		(setf (gethash "Czech Republic" countries) 11e6)   ; 11 million
+		(setf (gethash "Greece" countries) 11e6)           ; 11 million
+		(setf (gethash "Jordan" countries) 11e6)           ; 11 million
+		(setf (gethash "Portugal" countries) 10e6)         ; 10 million
+		(setf (gethash "Azerbaijan" countries) 10e6)       ; 10 million
+		(setf (gethash "Sweden" countries) 10e6)           ; 10 million
+		(setf (gethash "Honduras" countries) 10e6)         ; 10 million
+		(setf (gethash "United Arab Emirates" countries) 10e6) ; 10 million
+		(setf (gethash "Hungary" countries) 10e6)          ; 10 million
+		(setf (gethash "Tajikistan" countries) 10e6)       ; 10 million
+		(setf (gethash "Belarus" countries) 9e6)           ; 9 million
+		(setf (gethash "Austria" countries) 9e6)           ; 9 million
+		(setf (gethash "Papua New Guinea" countries) 9e6)  ; 9 million
+		(setf (gethash "Serbia" countries) 7e6)            ; 7 million
+		(setf (gethash "Israel" countries) 10e6)           ; 10 million
+		(setf (gethash "Switzerland" countries) 9e6)       ; 9 million
+		(setf (gethash "Togo" countries) 9e6)              ; 9 million
+		(setf (gethash "Sierra Leone" countries) 8e6)      ; 8 million
+		(setf (gethash "Hong Kong" countries) 7e6)         ; 7 million
+		(setf (gethash "Laos" countries) 8e6)              ; 8 million
+		(setf (gethash "Paraguay" countries) 6e6)          ; 6 million
+		(setf (gethash "Bulgaria" countries) 7e6)          ; 7 million
+		(setf (gethash "Libya" countries) 7e6)             ; 7 million
+		(setf (gethash "Lebanon" countries) 5e6)           ; 5 million
+		(setf (gethash "Nicaragua" countries) 7e6)         ; 7 million
+		(setf (gethash "Kyrgyzstan" countries) 7e6)        ; 7 million
+		(setf (gethash "El Salvador" countries) 6e6)       ; 6 million
+		(setf (gethash "Turkmenistan" countries) 6e6)      ; 6 million
+		(setf (gethash "Singapore" countries) 6e6)         ; 6 million
+		(setf (gethash "Denmark" countries) 6e6)           ; 6 million
+		(setf (gethash "Finland" countries) 6e6)           ; 6 million
+		(setf (gethash "Congo" countries) 6e6)             ; 6 million
+		(setf (gethash "Slovakia" countries) 6e6)          ; 6 million
+		(setf (gethash "Norway" countries) 6e6)            ; 6 million
+		(setf (gethash "Oman" countries) 5e6)              ; 5 million
+		(setf (gethash "State of Palestine" countries) 5e6) ; 5 million
+		(setf (gethash "Costa Rica" countries) 5e6)        ; 5 million
+		(setf (gethash "Liberia" countries) 5e6)           ; 5 million
+		(setf (gethash "Ireland" countries) 5e6)           ; 5 million
+		(setf (gethash "Central African Republic" countries) 5e6) ; 5 million
+		(setf (gethash "New Zealand" countries) 5e6)       ; 5 million
+		(setf (gethash "Mauritania" countries) 5e6)        ; 5 million
+		(setf (gethash "Panama" countries) 4e6)            ; 4 million
+		(setf (gethash "Kuwait" countries) 5e6)            ; 5 million
+		(setf (gethash "Croatia" countries) 4e6)           ; 4 million
+		(setf (gethash "Moldova" countries) 3e6)           ; 3 million
+		(setf (gethash "Georgia" countries) 4e6)           ; 4 million
+		(setf (gethash "Eritrea" countries) 4e6)           ; 4 million
+		(setf (gethash "Uruguay" countries) 3e6)           ; 3 million
+		(setf (gethash "Bosnia and Herzegovina" countries) 3e6) ; 3 million
+		(setf (gethash "Mongolia" countries) 3e6)          ; 3 million
+		(setf (gethash "Armenia" countries) 3e6)           ; 3 million
+		(setf (gethash "Jamaica" countries) 3e6)           ; 3 million
+		(setf (gethash "Qatar" countries) 3e6)             ; 3 million
+		(setf (gethash "Albania" countries) 3e6)           ; 3 million
+		(setf (gethash "Puerto Rico" countries) 3e6)       ; 3 million
+		(setf (gethash "Lithuania" countries) 3e6)         ; 3 million
+		(setf (gethash "Namibia" countries) 3e6)           ; 3 million
+		countries))
+
+
+
+
+		
 

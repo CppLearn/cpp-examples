@@ -7,6 +7,9 @@
 
 (require "asdf")
 
+(defun get-args ()
+	(ccl:*command-line-argument-list*))
+
 (defun run-internal (cmd args-string)
 	(let ((full-cmd (concatenate 'string cmd " " args-string))
 				(output nil)
