@@ -13,7 +13,7 @@
     :sgn
           ; conversion
     :one-rad
-    :deg->rad
+    :radians
                                         ; functions
     :log10
     :fib
@@ -52,7 +52,7 @@
 (defun log10 (n)
   (/ (log n) log10e))
 
-(defun deg->rad (d)
+(defun radians (d)
   "Convert radians to degrees."
   (* d one-rad))
                                         ; evenp is built-in.

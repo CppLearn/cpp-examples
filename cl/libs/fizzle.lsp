@@ -58,8 +58,8 @@
                                         ; factor like true ECEF coordinates.
 
 (defun latlon-xyz (latitude longitude)
-  (let* ((lat (moth:deg->rad latitude))
-         (lon (moth:deg->rad longitude))
+  (let* ((lat (moth:radians latitude))
+         (lon (moth:radians longitude))
          (cos_lat (cos lat))
          (sin_lat (sin lat))
          (cos_lon (cos lon))

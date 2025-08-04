@@ -12,16 +12,16 @@
                                         ; OS
     :get-args
     :run
-		:runu   ; experimental with uiop
+    :runu                               ; experimental with uiop
                                         ; file system
-		:chdir
+    :chdir
     :lart
     :ls
     :get-files
     :files
     :get-dirs
     :peek-file
-		:join-path
+    :join-path
     :rm-ext
                                         ; file edits
     :gedit-file
@@ -31,34 +31,49 @@
     
                                         ; sounds
     :play-sound
-																				; misc
-		:figlet
-		:mac-figlet
-		:fig
-		:mac-fig
+                                        ; misc
+    :figlet
+    :mac-figlet
+    :fig
+    :mac-fig
 
     ))
 
 (in-package unix)
 
-#+clisp (load "/home/rick/git/lisp/libs/unix.clisp.lsp")
-#+sbcl (load "/home/rick/git/lisp/libs/unix.sbcl.lsp")
-#+CCL (load "/home/rick/git/lisp/libs/unix.clozure.lsp")
+(defun get-lisp-dir ()
+  (let ((lisp-config nil)
+        (lisp-dir nil)
+        (f nil))
+    (cond ( (probe-file "/home/rick/.lispdir") (setf lisp-config "/home/rick/.lispdir") )
+          ( (probe-file "/home/rickde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
+          ( (probe-file "/Users/rickcde/.lispdir") setf lisp-config "/Users/rickcde/.lispdir" )
+					( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
+							(error msg)))
+					
+		(with-open-file (f lisp-config :direction :input)
+			(setf lisp-dir (read-line f)))
+		(format t "~% [lisp system] path to lisp libs: ~A" lisp-dir)
+		lisp-dir))
 
-																				; processes
+#+clisp (load (concatenate 'string (get-lisp-dir) "/" "unix.clisp.lsp"))
+#+sbcl (load (concatenate 'string (get-lisp-dir) "/" "unix.sbcl.lsp"))
+#+CCL (load (concatenate 'string (get-lisp-dir) "/" "unix.clozure.lsp"))
+
+                                        ; processes
 (defun run (cmd &optional (args nil))
-	(let ((parts nil)
-				(cmd-string "")
-				(arg-string ""))
-		(if (null args)  ; everything is in cmd.
-				(progn 
-					(setf parts (slip:split-string cmd #\ ))
-					(setf cmd-string (car parts))
-					(if (not (null (cdr parts)))
-							(setf arg-string (slip:join-strings (cdr parts))))
-					(run-internal cmd-string arg-string))
-				(progn       ; args is separate.
-					(run-internal cmd args)))))
+  (let ((parts nil)
+        (cmd-string "")
+        (arg-string ""))
+    (if (null args)  ; everything is in cmd.
+        (progn 
+          (setf parts (slip:split-string cmd #\ ))
+          (setf cmd-string (car parts))
+          (if (not (null (cdr parts)))
+              (setf arg-string (slip:join-strings (cdr parts))))
+          (run-internal cmd-string arg-string))
+        (progn       ; args is separate.
+          (run-internal cmd args)))))
 
                                         ; file system
 (defun lart ()
@@ -71,7 +86,7 @@
 (defun get-files ()
   (let ((dir-entries (run "ls -l")))
     (loop for e in dir-entries if (and
-																	 (> (length e) 0)
+                                   (> (length e) 0)
                                    (not (slip:starts-with "d" e))
                                    (not (slip:starts-with "total" e)))
           collect (slip:last-word e))))
@@ -79,8 +94,8 @@
 (defun get-dirs ()
   (let ((dir-entries (run "ls -l")))
     (loop for e in dir-entries if (and
-																	 (> (length e) 0)
-																	 (slip:starts-with "d" e))
+                                   (> (length e) 0)
+                                   (slip:starts-with "d" e))
           collect (slip:last-word e))))
 
 (defun files ()
@@ -97,20 +112,10 @@
     (close fh)))
 
 (defun join-path (p1 p2)
-	(let ((new-path (concatenate 'string p1 "/" p2)))
-		new-path))
+  (let ((new-path (concatenate 'string p1 "/" p2)))
+    new-path))
 
                                         ; file edits
-(defun get-lisp-dir ()
-  (let ((lisp-config nil)
-        (lisp-dir nil)
-        (f nil))
-    (cond ( (probe-file "/home/rick/.lispdir") (setf lisp-config "/home/rick/.lispdir") )
-          ( (probe-file "/home/rickde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
-          ( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
-              (error msg)))
-    (with-open-file (f lisp-config :direction :input)
-      (setf lisp-dir (read-line f)))))
 
 (defun libedit (lib)
   (gedit-file (concatenate 'string (get-lisp-dir) "/" lib ".lsp")))
@@ -127,22 +132,23 @@
 (defun play-sound (wav)
   (run "aplay" wav))
 
-																				; misc
+                                        ; misc
+
 (defun figlet (font mesg)
-	(if (probe-file "/usr/bin/figlet")
-			(run "/usr/bin/figlet" (format nil "-f ~a ~a" font mesg))
-																				;
-			(format t "~% [warning] sorry no figlet installed!~%")))
+  (if (probe-file "/usr/bin/figlet")
+      (run "/usr/bin/figlet" (format nil "-f ~a ~a" font mesg))
+                                        ;
+      (format t "~% [warning] sorry no figlet installed!~%")))
 
 (defun fig (mesg)
-	(let ((figlet-lines (unix:figlet "small" mesg)))
-		(loop for line in (unix:figlet "small" mesg) do (format t "~% ~a" line))))
+  (let ((figlet-lines (unix:figlet "small" mesg)))
+    (loop for line in (unix:figlet "small" mesg) do (format t "~% ~a" line))))
 
 (defun mac-figlet (mesg)
-	(let ((args (format nil "~a" mesg)))
-		(run "figlet" args)))
+  (let ((args (format nil "~a" mesg)))
+    (run "figlet" args)))
 
 (defun mac-fig (mesg)
-	(loop for line in (unix:mac-figlet mesg) do
-		(format t "~% ~a" line)))
+  (loop for line in (unix:mac-figlet mesg) do
+    (format t "~% ~a" line)))
 
