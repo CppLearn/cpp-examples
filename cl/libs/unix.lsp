@@ -23,20 +23,24 @@
     :peek-file
     :join-path
     :rm-ext
+    :pathname-as-directory
                                         ; file edits
     :gedit-file
     :libedit
                                         ; utilities
     :date
-    
+    :universal-time-to-local
                                         ; sounds
     :play-sound
+    :message
                                         ; misc
     :figlet
     :mac-figlet
     :fig
     :mac-fig
 
+    :nedry
+    
     ))
 
 (in-package unix)
@@ -48,13 +52,12 @@
     (cond ( (probe-file "/home/rick/.lispdir") (setf lisp-config "/home/rick/.lispdir") )
           ( (probe-file "/home/rickde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
           ( (probe-file "/Users/rickcde/.lispdir") setf lisp-config "/Users/rickcde/.lispdir" )
-					( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
-							(error msg)))
-					
-		(with-open-file (f lisp-config :direction :input)
-			(setf lisp-dir (read-line f)))
-		(format t "~% [lisp system] path to lisp libs: ~A" lisp-dir)
-		lisp-dir))
+          ( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
+              (error msg)))
+          
+    (with-open-file (f lisp-config :direction :input)
+      (setf lisp-dir (read-line f)))
+    lisp-dir))
 
 #+clisp (load (concatenate 'string (get-lisp-dir) "/" "unix.clisp.lsp"))
 #+sbcl (load (concatenate 'string (get-lisp-dir) "/" "unix.sbcl.lsp"))
@@ -115,6 +118,33 @@
   (let ((new-path (concatenate 'string p1 "/" p2)))
     new-path))
 
+; These file functions are from Practical Common Lisp
+
+(defun component-present-p (value)
+  (and value (not (eql value :unspecific))))
+
+(defun directory-pathname-p (p)
+  (and
+   (not (component-present-p (pathname-name p)))
+   (not (component-present-p (pathname-type p)))
+   p))
+
+(defun pathname-as-directory (name)
+  (let ((pathname (pathname name)))
+    (when (wild-pathname-p pathname)
+      (error "Can't reliably convert wild pathnames."))
+    (if (not (directory-pathname-p name))
+        (make-pathname
+         :directory (append (or (pathname-directory pathname)
+                                (list :relative))
+                            (list (file-namestring pathname)))
+         :name nil
+         :type nil
+         :defaults pathname)
+        pathname)))
+
+
+
                                         ; file edits
 
 (defun libedit (lib)
@@ -128,11 +158,24 @@
 (defun date ()
   (run "date" "-d now"))
 
+(defun universal-time-to-local (universal-time)
+  "Convert universal time to a readable local time string"
+  (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
+      (decode-universal-time universal-time)
+    (format nil "~D-~2,'0D-~2,'0D ~2,'0D:~2,'0D:~2,'0D"
+            year month date hour minute second)))
+
                                         ; sounds
 (defun play-sound (wav)
-  (run "aplay" wav))
+  (run (format nil "aplay --quiet ~a" wav)))
 
                                         ; misc
+
+(defmacro message (msg &body b)
+  `(let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
+    (play-sound ui-beep)
+    (format t (concatenate 'string "~%[~A] " ,msg)
+            (unix:universal-time-to-local (get-universal-time)) ,@b)))
 
 (defun figlet (font mesg)
   (if (probe-file "/usr/bin/figlet")
@@ -152,3 +195,12 @@
   (loop for line in (unix:mac-figlet mesg) do
     (format t "~% ~a" line)))
 
+(defun nedry ()
+  (let ((nedry-gif (concatenate 'string (get-lisp-dir) "/" "nedry.gif")))
+    (if (probe-file nedry-gif) (unix:run (format nil "gifview --animate ~A" nedry-gif))
+      (format t "~% Ah Ah Ah... You didn't say the magic word!"))))
+
+
+
+
+  
