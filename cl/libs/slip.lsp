@@ -111,7 +111,9 @@
    :blue_b   
    :magenta_b
    :cyan_b   
-   :white_b  
+   :white_b
+
+	 :reset
 
   ))
 
@@ -605,12 +607,11 @@
 (defvar white_b   "[47m")
 
 (defvar reset   "[0m")
-
 (defvar esc     #\ESC)
 
 (defun color (mesg color)
   "Print out in color using format statement"
-  (format t "~% ~c~a" esc color)
+  (format t "~c~a" esc color)
   (format t "~A" mesg)
   (format t "~c~a" esc reset))
 

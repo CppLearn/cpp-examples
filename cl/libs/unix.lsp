@@ -24,6 +24,8 @@
     :join-path
     :rm-ext
     :pathname-as-directory
+		:list-directory
+		
                                         ; file edits
     :gedit-file
     :libedit
@@ -50,7 +52,7 @@
         (lisp-dir nil)
         (f nil))
     (cond ( (probe-file "/home/rick/.lispdir") (setf lisp-config "/home/rick/.lispdir") )
-          ( (probe-file "/home/rickde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
+          ( (probe-file "/home/rickcde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
           ( (probe-file "/Users/rickcde/.lispdir") setf lisp-config "/Users/rickcde/.lispdir" )
           ( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
               (error msg)))
@@ -143,6 +145,41 @@
          :defaults pathname)
         pathname)))
 
+(defun directory-wildcard (dirname)
+	(make-pathname
+	 :name :wild
+	 :type #-clisp :wild #+clisp nil
+				 :defaults (pathname-as-directory dirname)))
+
+#+clisp
+(defun clisp-subdirectories-wildcard (wildcard)
+	(make-pathname
+	 :directory (append (pathname-directory wildcard) (list :wild))
+	 :name nil
+	 :type nil
+	 :defaults wildcard))
+
+(defun list-directory (dirname)
+	(when (wild-pathname-p dirname)
+		(error "Can only list concrete directory names."))
+	(let ((wildcard (directory-wildcard dirname)))
+
+		#+ (or sbcl cmu lispworks)
+		(directory wildcard)
+
+		#+openmcl
+		(directory wildcard :directories t)
+
+		#+allegro
+		(directory wildcard :directories-are-files nil)
+
+		#+clisp
+		(nconc
+		 (directory wildcard)
+		 (directory (clisp-subdirectories-wildcard wildcard)))
+
+		#- (or sbcl cmu lispworks openmcl allegro clisp)
+		(error "list-directory not implented")))
 
 
                                         ; file edits
@@ -171,11 +208,11 @@
 
                                         ; misc
 
-(defmacro message (msg &body b)
-  `(let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
+(defun message (msg)
+  (let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
     (play-sound ui-beep)
-    (format t (concatenate 'string "~%[~A] " ,msg)
-            (unix:universal-time-to-local (get-universal-time)) ,@b)))
+		(slip:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) slip:green)
+		(slip:color msg slip:blue)))
 
 (defun figlet (font mesg)
   (if (probe-file "/usr/bin/figlet")
