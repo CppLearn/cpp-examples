@@ -53,7 +53,7 @@
         (f nil))
     (cond ( (probe-file "/home/rick/.lispdir") (setf lisp-config "/home/rick/.lispdir") )
           ( (probe-file "/home/rickcde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
-          ( (probe-file "/Users/rickcde/.lispdir") setf lisp-config "/Users/rickcde/.lispdir" )
+          ( (probe-file "/Users/rickcde/.lispdir") (setf lisp-config "/Users/rickcde/.lispdir"))
           ( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
               (error msg)))
           
