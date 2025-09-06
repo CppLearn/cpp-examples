@@ -61,23 +61,31 @@
       (setf lisp-dir (read-line f)))
     lisp-dir))
 
-#+clisp (load (concatenate 'string (get-lisp-dir) "/" "unix.clisp.lsp"))
-#+sbcl (load (concatenate 'string (get-lisp-dir) "/" "unix.sbcl.lsp"))
-#+CCL (load (concatenate 'string (get-lisp-dir) "/" "unix.clozure.lsp"))
+(defvar unix-dialect-fname)
+(defvar unix-final-fname)
 
+#+clisp (setf unix-dialect-fname "unix.clisp.lsp")
+#+sbcl  (setf unix-dialect-fname "unix.sbcl.lsp")
+#+CCL   (setf unix-dialect-fname "unix.clozure.lsp")
+
+(setf unix-final-name (concatenate 'string (get-lisp-dir) "/" unix-dialect-fname))
+(format t "~% ---------------------------------------------------------------------")
+(format t "~% loading unix dialect: ~A" unix-final-name)
+(format t "~% ---------------------------------------------------------------------")
+(load unix-final-name)
                                         ; processes
 (defun run (cmd &optional (args nil))
   (let ((parts nil)
         (cmd-string "")
         (arg-string ""))
-    (if (null args)  ; everything is in cmd.
+    (if (null args)											; everything is in cmd.
         (progn 
           (setf parts (slip:split-string cmd #\ ))
           (setf cmd-string (car parts))
           (if (not (null (cdr parts)))
               (setf arg-string (slip:join-strings (cdr parts))))
           (run-internal cmd-string arg-string))
-        (progn       ; args is separate.
+        (progn													; args is separate.
           (run-internal cmd args)))))
 
                                         ; file system
