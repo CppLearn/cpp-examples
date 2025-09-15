@@ -20,8 +20,6 @@
         (setf output-list (slip:file-to-list *output-file* )))
     output-list))
 
-(defun chdir (path)
-	(ext:cd path))
 
 																				; ext:delete-directory
 																				; ext:dir
@@ -35,3 +33,4 @@
 																				; ext:copy-file        
 																				; ext:copy-file-info   
 																				; ext:copy-file-stat    
+

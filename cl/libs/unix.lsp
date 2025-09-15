@@ -23,8 +23,12 @@
     :peek-file
     :join-path
     :rm-ext
+		:pathname-as-file
     :pathname-as-directory
 		:list-directory
+		:file-exists-p
+		:walk-directory
+
 		
                                         ; file edits
     :gedit-file
@@ -32,6 +36,9 @@
                                         ; utilities
     :date
     :universal-time-to-local
+
+		:play-gif                           ; images
+		
                                         ; sounds
     :play-sound
     :message
@@ -66,6 +73,7 @@
 
 #+clisp (setf unix-dialect-fname "unix.clisp.lsp")
 #+sbcl  (setf unix-dialect-fname "unix.sbcl.lsp")
+#+sbcl  (require :sb-posix)
 #+CCL   (setf unix-dialect-fname "unix.clozure.lsp")
 
 (setf unix-final-name (concatenate 'string (get-lisp-dir) "/" unix-dialect-fname))
@@ -89,6 +97,11 @@
           (run-internal cmd args)))))
 
                                         ; file system
+(defun chdir (path)
+	#+clisp (ext:cd path)
+	#+sbcl (sb-posix:chdir path)
+	#+CCL (ccl:cwd path))
+
 (defun lart ()
   (run "ls" "-lart"))
 
@@ -138,6 +151,20 @@
    (not (component-present-p (pathname-name p)))
    (not (component-present-p (pathname-type p)))
    p))
+
+(defun pathname-as-file (name)
+	(let ((pathname name)))
+	(when (wild-pathname-p pathname)
+		(error "Can't reliably convert wild pathnames."))
+	(if (directory-pathname-p name)
+			(let* ((directory (pathname-directory pathname))
+						 (name-and-type (pathname (first (last directory)))))
+				(make-pathname
+				 :directory (butlast directory)
+				 :name (pathname-name name-and-type)
+				 :type (pathname-type name-and-type)
+				 :defaults pathname))
+			pathname))
 
 (defun pathname-as-directory (name)
   (let ((pathname (pathname name)))
@@ -190,6 +217,37 @@
 		(error "list-directory not implented")))
 
 
+(defun file-exists-p (pathname)
+	#+ (or sbcl lispworks openmcl)				; simple probe-file
+	(probe-file pathname)
+
+	#+ (or allegro cmu)
+	(or (probe-file (pathname-as-directory pathname))
+			(probe-file pathname))
+
+	#+clisp
+	(or (ignore-errors
+				(probe-file (pathname-as-file pathname)))
+			(ignore-errors
+				(let ((directory-form (pathname-as-directory pathname)))
+					(when (ext:probe-directory directory-form)
+						directory-form))))
+
+	#- (or sbcl cmu lispworks openmcl allegro clisp)
+	(error "file-exists-p not implemented"))
+
+(defun walk-directory (dirname fn &key directories (test (constantly t)))
+	(labels
+			((walk (name)
+				 (cond
+					 ((directory-pathname-p name)
+						(when (and directories (funcall test name))
+							(funcall fn name))
+						(dolist (x (list-directory name)) (walk x)))
+
+					 ((funcall test name) (funcall fn name)))))
+		(walk (pathname-as-directory dirname))))
+
                                         ; file edits
 
 (defun libedit (lib)
@@ -209,6 +267,10 @@
       (decode-universal-time universal-time)
     (format nil "~D-~2,'0D-~2,'0D ~2,'0D:~2,'0D:~2,'0D"
             year month date hour minute second)))
+
+                                         ; images
+(defun play-gif (gif)
+	(run (format nil "gifview --animate ~A" gif)))
 
                                         ; sounds
 (defun play-sound (wav)
