@@ -24,7 +24,7 @@
 		:random-get-event
     :regression-xy
 		:normal-dist
-		
+		:norm-cdf
 		))
 
 (in-package dice)
@@ -220,6 +220,10 @@
 				 (e-term (exp (* (- (/ 1 2)) (expt (/ (- x mu) sigma) 2)))))
 		(* pi-term e-term)))
 
+																			 
+(defun norm-cdf (x mu sigma)
+	"CDF of random variable of normal distribution."
+	(* 0.5 (+ 1 (moth:erf (/ (- x mu) (* (sqrt 2.0) sigma))))))
 
 
 

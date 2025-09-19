@@ -18,7 +18,8 @@
     :log10
     :fib
     :fact
-    :est-pi-0   
+    :est-pi-0
+		:erf
                                         ; linear algebra
     :dot
                                         ; interpolation
@@ -169,12 +170,21 @@
       (reduce #'+ (mapcar #'* a b))
       (error "size of vectors not equal!")))
 
+(defun erf (x)
+	"Approximation for erf - error function (from Abramowitz & Stegun)."	
+																				; Constants for the approximation 
+    (defconstant a1 0.254829592)
+    (defconstant a2 -0.284496736)
+    (defconstant a3 1.421413741)
+    (defconstant a4 -1.453152027)
+    (defconstant a5 1.061405429)
+    (defconstant p  0.3275911)
+																				; Handle negative x values using erf(-x) = -erf(x)
+	(if (< x 0)
+			(return-from erf (- (erf (- x)))))
 
-
-
-
-
-
-
-
+	(let* ((tt (/ 1.0 (+ 1.0 (* p x))))
+				 (y  (- 1.0 (* tt (exp (* (- x) x))
+											 (+ (* (+ (* (+ (* (+ a4 (* a5 tt)) tt) a3) tt) a2) tt) a1)))))
+		y))
 
