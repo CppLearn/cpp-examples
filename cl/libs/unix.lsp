@@ -20,6 +20,7 @@
     :get-files
     :files
     :get-dirs
+		:less
     :peek-file
     :join-path
     :rm-ext
@@ -28,8 +29,6 @@
 		:list-directory
 		:file-exists-p
 		:walk-directory
-
-		
                                         ; file edits
     :gedit-file
     :libedit
@@ -109,20 +108,26 @@
   (let ((dir-entries (run "ls" (concatenate 'string "-lart " path))))
     (loop for d in dir-entries do (format t "~% ~a" d))))
 
-(defun get-files ()
-  (let ((dir-entries (run "ls -l")))
-    (loop for e in dir-entries if (and
-                                   (> (length e) 0)
-                                   (not (slip:starts-with "d" e))
-                                   (not (slip:starts-with "total" e)))
-          collect (slip:last-word e))))
+(defun get-files (&optional (dir "./") &key (path nil add-path-p))
+  (let* ((target (concatenate 'string "-l " dir))
+				 (dir-entries (run "ls" target))
+				 (files nil))
+
+    (setf files (loop for e in dir-entries if (and
+																							 (> (length e) 0)
+																							 (not (slip:starts-with "d" e))
+																							 (not (slip:starts-with "total" e)))
+									collect (slip:last-word e)))		
+		(if add-path-p
+				(mapcar (lambda (f) (concatenate 'string dir "/" f)) files)
+				files)))
 
 (defun get-dirs ()
   (let ((dir-entries (run "ls -l")))
     (loop for e in dir-entries if (and
                                    (> (length e) 0)
                                    (slip:starts-with "d" e))
-          collect (slip:last-word e))))
+       collect (slip:last-word e))))
 
 (defun files ()
   (loop for f in (unix:get-files) do (format t "~% :: ~a" (run "file" (format nil "~a" f)))))
@@ -130,6 +135,9 @@
 (defun rm-ext (f)
   (let ((parts (slip:split-string f #\.)))
     (car parts)))
+
+(defun less (f)
+	(unix:run "less" f))
 
 (defun peek-file (f n)
   (let ((fh (open f :direction :input)))
@@ -273,8 +281,10 @@
 	(run (format nil "gifview --animate ~A" gif)))
 
                                         ; sounds
-(defun play-sound (wav)
-  (run (format nil "aplay --quiet ~a" wav)))
+(defun play-sound (wav &key (show nil show-p))
+	(if show-p
+			(unix:message wav))
+  (unix:run (format nil "aplay --quiet ~a" wav)))
 
                                         ; misc
 

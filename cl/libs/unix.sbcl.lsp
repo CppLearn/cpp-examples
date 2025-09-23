@@ -11,9 +11,11 @@
 	sb-ext:*posix-argv*)
 
 (defun run-internal (cmd args-string)
-	(let* ((output (uiop:run-program (concatenate 'string cmd " " args-string) :output :string))
-				 (output-list (slip:split-string output #\Newline)))
-		output-list))
+	(ignore-errors (let* ((output (uiop:run-program (concatenate 'string cmd " " args-string) :output :string :ignore-error-status t :force-shell t))
+												(output-list (slip:split-string output #\Newline)))
+									 output-list)))
+
+
 
 
 

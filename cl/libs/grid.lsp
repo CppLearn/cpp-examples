@@ -24,6 +24,7 @@
   (let ((fname "clisp-one-var-plot.dat")
 				(script (concatenate 'string (slip:bin-dir) "clisp_gplot_one_var.sh")) )
     (slip:list-to-file l fname)
+		(sleep 0.5)
 		(unix:run script fname)
 		(unix:run "/usr/bin/rm" (concatenate 'string "-vf" fname))))
 
@@ -39,6 +40,7 @@
     (with-open-file (f fname :direction :output)
       (mapcar (lambda (x y)
                 (format f "~% ~a ~a" x y)) a b))
+		(sleep 0.5)		
 		(unix:run script fname)
 		(unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))))
 
@@ -49,13 +51,7 @@
     (with-open-file (f fname :direction :output)
       (mapcar (lambda (x y)
                 (format f "~% ~a ~a" x y)) a b))
+		(sleep 0.5)		
 		(unix:run script fname)
 		(unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))))
 
-
-
-
-
-
-
-		

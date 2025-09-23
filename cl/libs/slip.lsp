@@ -359,7 +359,7 @@
     (reverse lyst)))
 
 (defun list-to-file (lst filename)
-  (with-open-file (f filename :direction :output)
+  (with-open-file (f filename :direction :output :if-exists :supersede)
     (loop for l in lst do
           (format f "~%~a" l))))
 
@@ -546,7 +546,6 @@
             do (progn
                  (push obj objects)))
       (reverse objects))))
-
 
 ;;    [Test Helpers]
 
