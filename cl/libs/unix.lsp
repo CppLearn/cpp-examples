@@ -14,6 +14,9 @@
     :run
     :runu                               ; experimental with uiop
                                         ; file system
+
+		:is-mac-p                           ; OS version checks
+		
     :chdir
     :lart
     :ls
@@ -94,6 +97,10 @@
           (run-internal cmd-string arg-string))
         (progn													; args is separate.
           (run-internal cmd args)))))
+
+                                        ; detect different operating systems
+(defun is-mac-p ()
+	(probe-file "/System/Library/CoreServices/SystemVersion.plist"))
 
                                         ; file system
 (defun chdir (path)
@@ -283,8 +290,10 @@
                                         ; sounds
 (defun play-sound (wav &key (show nil show-p))
 	(if show-p
-			(unix:message wav))
-  (unix:run (format nil "aplay --quiet ~a" wav)))
+			(format t "~% playing sound: ~a" wav))
+	(setf cmd (cond ((is-mac-p) "afplay ~a")
+									(t "aplay --quiet ~a")))	
+  (unix:run (format nil cmd wav)))
 
                                         ; misc
 
@@ -317,7 +326,3 @@
     (if (probe-file nedry-gif) (unix:run (format nil "gifview --animate ~A" nedry-gif))
       (format t "~% Ah Ah Ah... You didn't say the magic word!"))))
 
-
-
-
-  

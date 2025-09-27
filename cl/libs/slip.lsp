@@ -36,7 +36,8 @@
    :foreach-i
    :i
    :generate
-   :sort-list
+	 :mapcard
+		:sort-list
    :random-choice
    :random-elt
    :shuffle
@@ -272,6 +273,12 @@
 
 (defun generate(start end &optional (increment 1) )
   (loop for i from start to end by increment collect i))
+
+(defun mapcard (f l)
+	"Destructively apply function f to each element of list l."
+	(loop for cons on l do
+		(setf (car cons) (funcall f (car cons))))
+	l)
 
 (defun sort-list (l)
   "Sort list of strings in alphabetical order (very common!)"
