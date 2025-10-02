@@ -196,7 +196,8 @@
 		y))
 
 (defun sum (nums)
-	(reduce #'+ nums))
+	(if (listp nums)
+			(reduce #'+ nums)))
 
 (defun avg (nums)
 	(if (> (length nums) 0)
