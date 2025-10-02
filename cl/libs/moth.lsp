@@ -20,6 +20,13 @@
     :fact
     :est-pi-0
 		:erf
+
+																				; simple stats
+																				; more complex stats go into dice.lsp
+		:sum
+		:avg
+		
+		
                                         ; linear algebra
     :dot
                                         ; interpolation
@@ -187,4 +194,15 @@
 				 (y  (- 1.0 (* tt (exp (* (- x) x))
 											 (+ (* (+ (* (+ (* (+ a4 (* a5 tt)) tt) a3) tt) a2) tt) a1)))))
 		y))
+
+(defun sum (nums)
+	(reduce #'+ nums))
+
+(defun avg (nums)
+	(if (> (length nums) 0)
+			(/ (moth:sum nums) (length nums))
+			0.0))
+
+
+
 
