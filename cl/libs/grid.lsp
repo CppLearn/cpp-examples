@@ -10,11 +10,11 @@
 
   ( :export
     
-    :plot-list        ; plot list of values.
-    :plot-2d-func     ; plot 2-d function.
-    :plot-xy          ; plot two lists vs. each other.
+    :plot-list               ; plot list of values.
+    :plot-2d-func        ; plot 2-d function.
+    :plot-xy                  ; plot two lists vs. each other.
     :plot-scatterplot ; plot two lists vs. each other as a scatterplot.
-
+		:plot-functions    ; plot all the functions in a list on same plot.
     ) )
 
 (in-package grid)
@@ -53,5 +53,24 @@
                 (format f "~% ~a ~a" x y)) a b))
 		(sleep 0.5)		
 		(unix:run script fname)
+		(unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))))
+
+(defun plot-functions (list-of-functions)
+	"Use gnuplot to plot a list of functions on the same plot."
+  (let ((fname "clisp-plot-functions.dat"))
+		(with-open-file (plot-file fname :direction :output :if-exists :supersede)
+			(write-string "plot " plot-file)
+			(labels ((write-functions (function-list f)
+								 (if (> (length function-list) 1)
+										 (progn
+											 (write-string (car function-list) f)
+											 (write-string ", " f)
+											 (write-functions (cdr function-list) f))
+										 ; else last one
+										 (write-string (car function-list) f))))
+				(write-functions list-of-functions plot-file)))
+																				; run gnuplot on our script
+		(unix:run "gnuplot" (format nil "-p -c ~a" fname))
+		; remove file when done
 		(unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))))
 

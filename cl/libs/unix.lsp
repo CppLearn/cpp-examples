@@ -15,23 +15,23 @@
     :runu                               ; experimental with uiop
                                         ; file system
 
-		:is-mac-p                           ; OS version checks
-		
+    :is-mac-p                           ; OS version checks
+    
     :chdir
     :lart
     :ls
     :get-files
     :files
     :get-dirs
-		:less
+    :less
     :peek-file
     :join-path
     :rm-ext
-		:pathname-as-file
+    :pathname-as-file
     :pathname-as-directory
-		:list-directory
-		:file-exists-p
-		:walk-directory
+    :list-directory
+    :file-exists-p
+    :walk-directory
                                         ; file edits
     :gedit-file
     :libedit
@@ -39,11 +39,11 @@
     :date
     :universal-time-to-local
 
-		:play-gif                           ; images
-		
+    :play-gif                           ; images
+    
                                         ; sounds
     :play-sound
-    :message
+    :message   
                                         ; misc
     :figlet
     :mac-figlet
@@ -88,25 +88,25 @@
   (let ((parts nil)
         (cmd-string "")
         (arg-string ""))
-    (if (null args)											; everything is in cmd.
+    (if (null args)                     ; everything is in cmd.
         (progn 
           (setf parts (slip:split-string cmd #\ ))
           (setf cmd-string (car parts))
           (if (not (null (cdr parts)))
               (setf arg-string (slip:join-strings (cdr parts))))
           (run-internal cmd-string arg-string))
-        (progn													; args is separate.
+        (progn                          ; args is separate.
           (run-internal cmd args)))))
 
                                         ; detect different operating systems
 (defun is-mac-p ()
-	(probe-file "/System/Library/CoreServices/SystemVersion.plist"))
+  (probe-file "/System/Library/CoreServices/SystemVersion.plist"))
 
                                         ; file system
 (defun chdir (path)
-	#+clisp (ext:cd path)
-	#+sbcl (sb-posix:chdir path)
-	#+CCL (ccl:cwd path))
+  #+clisp (ext:cd path)
+  #+sbcl (sb-posix:chdir path)
+  #+CCL (ccl:cwd path))
 
 (defun lart ()
   (run "ls" "-lart"))
@@ -117,17 +117,17 @@
 
 (defun get-files (&optional (dir "./") &key (path nil add-path-p))
   (let* ((target (concatenate 'string "-l " dir))
-				 (dir-entries (run "ls" target))
-				 (files nil))
+         (dir-entries (run "ls" target))
+         (files nil))
 
     (setf files (loop for e in dir-entries if (and
-																							 (> (length e) 0)
-																							 (not (slip:starts-with "d" e))
-																							 (not (slip:starts-with "total" e)))
-									collect (slip:last-word e)))		
-		(if add-path-p
-				(mapcar (lambda (f) (concatenate 'string dir "/" f)) files)
-				files)))
+                                               (> (length e) 0)
+                                               (not (slip:starts-with "d" e))
+                                               (not (slip:starts-with "total" e)))
+                  collect (slip:last-word e)))    
+    (if add-path-p
+        (mapcar (lambda (f) (concatenate 'string dir "/" f)) files)
+        files)))
 
 (defun get-dirs ()
   (let ((dir-entries (run "ls -l")))
@@ -144,7 +144,7 @@
     (car parts)))
 
 (defun less (f)
-	(unix:run "less" f))
+  (unix:run "less" f))
 
 (defun peek-file (f n)
   (let ((fh (open f :direction :input)))
@@ -168,18 +168,18 @@
    p))
 
 (defun pathname-as-file (name)
-	(let ((pathname name)))
-	(when (wild-pathname-p pathname)
-		(error "Can't reliably convert wild pathnames."))
-	(if (directory-pathname-p name)
-			(let* ((directory (pathname-directory pathname))
-						 (name-and-type (pathname (first (last directory)))))
-				(make-pathname
-				 :directory (butlast directory)
-				 :name (pathname-name name-and-type)
-				 :type (pathname-type name-and-type)
-				 :defaults pathname))
-			pathname))
+  (let ((pathname name)))
+  (when (wild-pathname-p pathname)
+    (error "Can't reliably convert wild pathnames."))
+  (if (directory-pathname-p name)
+      (let* ((directory (pathname-directory pathname))
+             (name-and-type (pathname (first (last directory)))))
+        (make-pathname
+         :directory (butlast directory)
+         :name (pathname-name name-and-type)
+         :type (pathname-type name-and-type)
+         :defaults pathname))
+      pathname))
 
 (defun pathname-as-directory (name)
   (let ((pathname (pathname name)))
@@ -196,72 +196,72 @@
         pathname)))
 
 (defun directory-wildcard (dirname)
-	(make-pathname
-	 :name :wild
-	 :type #-clisp :wild #+clisp nil
-				 :defaults (pathname-as-directory dirname)))
+  (make-pathname
+   :name :wild
+   :type #-clisp :wild #+clisp nil
+         :defaults (pathname-as-directory dirname)))
 
 #+clisp
 (defun clisp-subdirectories-wildcard (wildcard)
-	(make-pathname
-	 :directory (append (pathname-directory wildcard) (list :wild))
-	 :name nil
-	 :type nil
-	 :defaults wildcard))
+  (make-pathname
+   :directory (append (pathname-directory wildcard) (list :wild))
+   :name nil
+   :type nil
+   :defaults wildcard))
 
 (defun list-directory (dirname)
-	(when (wild-pathname-p dirname)
-		(error "Can only list concrete directory names."))
-	(let ((wildcard (directory-wildcard dirname)))
+  (when (wild-pathname-p dirname)
+    (error "Can only list concrete directory names."))
+  (let ((wildcard (directory-wildcard dirname)))
 
-		#+ (or sbcl cmu lispworks)
-		(directory wildcard)
+    #+ (or sbcl cmu lispworks)
+    (directory wildcard)
 
-		#+openmcl
-		(directory wildcard :directories t)
+    #+openmcl
+    (directory wildcard :directories t)
 
-		#+allegro
-		(directory wildcard :directories-are-files nil)
+    #+allegro
+    (directory wildcard :directories-are-files nil)
 
-		#+clisp
-		(nconc
-		 (directory wildcard)
-		 (directory (clisp-subdirectories-wildcard wildcard)))
+    #+clisp
+    (nconc
+     (directory wildcard)
+     (directory (clisp-subdirectories-wildcard wildcard)))
 
-		#- (or sbcl cmu lispworks openmcl allegro clisp)
-		(error "list-directory not implented")))
+    #- (or sbcl cmu lispworks openmcl allegro clisp)
+    (error "list-directory not implented")))
 
 
 (defun file-exists-p (pathname)
-	#+ (or sbcl lispworks openmcl)				; simple probe-file
-	(probe-file pathname)
+  #+ (or sbcl lispworks openmcl)        ; simple probe-file
+  (probe-file pathname)
 
-	#+ (or allegro cmu)
-	(or (probe-file (pathname-as-directory pathname))
-			(probe-file pathname))
+  #+ (or allegro cmu)
+  (or (probe-file (pathname-as-directory pathname))
+      (probe-file pathname))
 
-	#+clisp
-	(or (ignore-errors
-				(probe-file (pathname-as-file pathname)))
-			(ignore-errors
-				(let ((directory-form (pathname-as-directory pathname)))
-					(when (ext:probe-directory directory-form)
-						directory-form))))
+  #+clisp
+  (or (ignore-errors
+        (probe-file (pathname-as-file pathname)))
+      (ignore-errors
+        (let ((directory-form (pathname-as-directory pathname)))
+          (when (ext:probe-directory directory-form)
+            directory-form))))
 
-	#- (or sbcl cmu lispworks openmcl allegro clisp)
-	(error "file-exists-p not implemented"))
+  #- (or sbcl cmu lispworks openmcl allegro clisp)
+  (error "file-exists-p not implemented"))
 
 (defun walk-directory (dirname fn &key directories (test (constantly t)))
-	(labels
-			((walk (name)
-				 (cond
-					 ((directory-pathname-p name)
-						(when (and directories (funcall test name))
-							(funcall fn name))
-						(dolist (x (list-directory name)) (walk x)))
+  (labels
+      ((walk (name)
+         (cond
+           ((directory-pathname-p name)
+            (when (and directories (funcall test name))
+              (funcall fn name))
+            (dolist (x (list-directory name)) (walk x)))
 
-					 ((funcall test name) (funcall fn name)))))
-		(walk (pathname-as-directory dirname))))
+           ((funcall test name) (funcall fn name)))))
+    (walk (pathname-as-directory dirname))))
 
                                         ; file edits
 
@@ -285,14 +285,14 @@
 
                                          ; images
 (defun play-gif (gif)
-	(run (format nil "gifview --animate ~A" gif)))
+  (run (format nil "gifview --min-delay 20 --animate ~A" gif)))
 
                                         ; sounds
 (defun play-sound (wav &key (show nil show-p))
-	(if show-p
-			(format t "~% playing sound: ~a" wav))
-	(setf cmd (cond ((is-mac-p) "afplay ~a")
-									(t "aplay --quiet ~a")))	
+  (if show-p
+      (format t "~% playing sound: ~a" wav))
+  (setf cmd (cond ((is-mac-p) "afplay ~a")
+                  (t "aplay --quiet ~a")))  
   (unix:run (format nil cmd wav)))
 
                                         ; misc
@@ -300,8 +300,8 @@
 (defun message (msg)
   (let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
     (play-sound ui-beep)
-		(slip:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) slip:green)
-		(slip:color msg slip:blue)))
+    (slip:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) slip:green)
+    (slip:color msg slip:blue)))
 
 (defun figlet (font mesg)
   (if (probe-file "/usr/bin/figlet")

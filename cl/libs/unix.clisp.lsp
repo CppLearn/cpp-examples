@@ -14,8 +14,8 @@
         (output-list nil))
 
     (ext:run-program cmd :arguments args
-                         :output *output-file*
-                         :if-output-exists :overwrite)
+                     :output *output-file*
+                     :if-output-exists :overwrite)
     (if (probe-file *output-file*)
         (setf output-list (slip:file-to-list *output-file* )))
     output-list))
