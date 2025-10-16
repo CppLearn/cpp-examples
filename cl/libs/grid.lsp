@@ -15,6 +15,13 @@
     :plot-xy                  ; plot two lists vs. each other.
     :plot-scatterplot ; plot two lists vs. each other as a scatterplot.
 		:plot-functions    ; plot all the functions in a list on same plot.
+
+		; tree visualization
+		; these tree functions are with the plotting functions because
+		; this package already depends on the unix package.
+
+		:tree-viz  ; requires graphviz (dot)
+		
     ) )
 
 (in-package grid)
@@ -73,4 +80,43 @@
 		(unix:run "gnuplot" (format nil "-p -c ~a" fname))
 		; remove file when done
 		(unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))))
+
+																				; tree visualization functions.
+
+(defun tree-viz (root)
+	"Display tree using graphviz."
+  (let* ((fname "clisp-tnode.dot")
+				 (png-name (concatenate 'string fname ".png")))
+		(with-open-file (dot-file fname :direction :output :if-exists :supersede)
+			(format dot-file "digraph G {~%")
+      (format dot-file "~%rankdir=TB;")
+      (format dot-file "~%bgcolor=\"lightyellow\";")
+			(format dot-file "~%pad=\"0.5\";")
+      (format dot-file "~%node [shape=ellipse, style=filled, fillcolor=\"lightblue\", fontname=\"Arial\", fontsize=10];")
+			(format dot-file "~%edge [color=\"black\", arrowhead=normal];")
+			
+			(let ((current-parent nil)
+						(tree-nodes nil)
+						(*print-case* :downcase))
+				(labels ((traverse (subtree)
+									 (if (listp subtree)
+											 (loop for branch in subtree do
+														(if (atom branch) ; down to a leaf
+																(if current-parent
+																		(format dot-file "~a->~a~%" current-parent branch))
+																(progn ; if branch is list, tree it as a subtree
+																	(setf current-parent (car subtree))
+																	(traverse branch)))))))
+					(traverse root)))
+			
+			(format dot-file "~% ~%}"))       ; close dot file before trying to run dot on it
+																				; or else it hangs.
+		
+		(unix:run (format nil "/usr/bin/dot -Tpng ./~a -o ~a" fname png-name))
+																				; remove file when done			
+																				; (unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))
+		(sleep 1)
+		(unix:run "/usr/bin/eog" (format nil "~a" png-name))))
+
+
 

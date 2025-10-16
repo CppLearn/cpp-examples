@@ -12,7 +12,7 @@
   (let ((args (slip:split-string args-string #\ ))
         (*output-file* "clisp.run.out")
         (output-list nil))
-
+		(format t "~% running cmd: ~a with args: ~a" cmd args)		
     (ext:run-program cmd :arguments args
                      :output *output-file*
                      :if-output-exists :overwrite)
