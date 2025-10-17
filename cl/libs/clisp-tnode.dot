@@ -1,0 +1,22 @@
+digraph G {
+
+rankdir=TB;
+bgcolor="lightyellow";
+pad="0.5";
+node [shape=ellipse, style=filled, fillcolor="lightblue", fontname="Arial", fontsize=10];
+edge [color="black", arrowhead=normal];arts->grappling
+grappling->wrestling
+grappling->judo
+grappling->jiu_jitsu
+arts->striking
+striking->karate
+striking->kung_fu
+striking->kenpo
+striking->tae
+striking->tang
+arts->defense
+defense->krav
+defense->aikido
+
+ 
+}

@@ -10,19 +10,21 @@
 
   ( :export
     
-    :plot-list               ; plot list of values.
-    :plot-2d-func        ; plot 2-d function.
-    :plot-xy                  ; plot two lists vs. each other.
-    :plot-scatterplot ; plot two lists vs. each other as a scatterplot.
+    :plot-list         ; plot list of values.
+    :plot-2d-func      ; plot 2-d function.
+    :plot-xy           ; plot two lists vs. each other.
+    :plot-scatterplot  ; plot two lists vs. each other as a scatterplot.
 		:plot-functions    ; plot all the functions in a list on same plot.
 
-		; tree visualization
-		; these tree functions are with the plotting functions because
-		; this package already depends on the unix package.
-
-		:tree-viz  ; requires graphviz (dot)
+																				; graph/tree visualizations
+																				; these graph functions are with the plotting functions because
+																				; this package already depends on the unix package.
 		
-    ) )
+		:graph-viz   ; undirected graph
+		:wgraph-viz  ; undirected weighted graph
+		:tree-viz    ; tree (directed graph)
+		
+    ))
 
 (in-package grid)
 
@@ -118,5 +120,52 @@
 		(sleep 1)
 		(unix:run "/usr/bin/eog" (format nil "~a" png-name))))
 
+(defun graph-viz (graph)
+	"Display graph using graphviz."
+	
+  (let* ((fname "clisp-gnode.dot")
+				 (png-name (concatenate 'string fname ".png")))
+		(with-open-file (dot-file fname :direction :output :if-exists :supersede)
+			(format dot-file "graph G {~%")
+      (format dot-file "~%bgcolor=\"lightyellow\";")
+			(format dot-file "~%pad=\"0.5\";")
+      (format dot-file "~%node [shape=ellipse, style=filled, fillcolor=\"lightblue\", fontname=\"Arial\", fontsize=10];")
+			(format dot-file "~%edge [color=\"black\", arrowhead=normal];")
+			
+			(let ((*print-case* :downcase))
+				(loop for node in graph do
+					(format dot-file "~% ~a -- ~a" (car node) (cadr node)))
+			
+			(format dot-file "~% ~%}")))       ; close dot file before trying to run dot on it
+																				; or else it hangs.
+		
+		(unix:run (format nil "/usr/bin/dot -Tpng ./~a -o ~a" fname png-name))
+																				; remove file when done			
+																				; (unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))
+		(sleep 1)
+		(unix:run "/usr/bin/eog" (format nil "~a" png-name))))
 
-
+(defun wgraph-viz (wgraph)
+	"Display weighted graph using graphviz."
+	
+  (let* ((fname "clisp-gnode.dot")
+				 (png-name (concatenate 'string fname ".png")))
+		(with-open-file (dot-file fname :direction :output :if-exists :supersede)
+			(format dot-file "graph G {~%")
+      (format dot-file "~%bgcolor=\"lightyellow\";")
+			(format dot-file "~%pad=\"0.5\";")
+      (format dot-file "~%node [shape=ellipse, style=filled, fillcolor=\"lightblue\", fontname=\"Arial\", fontsize=10];")
+			(format dot-file "~%edge [color=\"black\", arrowhead=normal];")
+			
+			(let ((*print-case* :downcase))
+				(loop for node in wgraph do
+					(format dot-file "~% ~a -- ~a [label = \"~a\", fontsize=\"9\"];" (car node) (cadr node) (caddr node))))
+			
+			(format dot-file "~% ~%}"))       ; close dot file before trying to run dot on it
+																				; or else it hangs.
+		
+		(unix:run (format nil "/usr/bin/dot -Tpng ./~a -o ~a" fname png-name))
+																				; remove file when done			
+																				; (unix:run "/usr/bin/rm" (concatenate 'string "-vf " fname))
+		(sleep 1)
+		(unix:run "/usr/bin/eog" (format nil "~a" png-name))))
