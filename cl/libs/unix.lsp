@@ -115,7 +115,7 @@
   (let ((dir-entries (run "ls" (concatenate 'string "-lart " path))))
     (loop for d in dir-entries do (format t "~% ~a" d))))
 
-(defun get-files (&optional (dir "./") &key (path nil add-path-p))
+(defun get-files (&optional (dir "./") &key (path nil add-path-p) (no-ext nil no-ext-p))
   (let* ((target (concatenate 'string "-l " dir))
          (dir-entries (run "ls" target))
          (files nil))
@@ -124,7 +124,9 @@
                                                (> (length e) 0)
                                                (not (slip:starts-with "d" e))
                                                (not (slip:starts-with "total" e)))
-                  collect (slip:last-word e)))    
+                  collect (slip:last-word e)))
+    (if no-ext-p
+				(setf files (loop for f in files collect (car (slip:split-string f #\.)))))
     (if add-path-p
         (mapcar (lambda (f) (concatenate 'string dir "/" f)) files)
         files)))
