@@ -26,11 +26,12 @@
     :less
     :peek-file
     :join-path
-		:join-paths
-		:file-only
+    :join-paths
+    :file-only
     :file-stem
-		:add-ext
-		
+    :file-ext
+    :add-ext
+    
     :pathname-as-file
     :pathname-as-directory
     :list-directory
@@ -130,7 +131,7 @@
                                                (not (slip:starts-with "total" e)))
                   collect (slip:last-word e)))
     (if no-ext-p
-				(setf files (loop for f in files collect (car (slip:split-string f #\.)))))
+        (setf files (loop for f in files collect (car (slip:split-string f #\.)))))
     (if add-path-p
         (mapcar (lambda (f) (concatenate 'string dir "/" f)) files)
         files)))
@@ -146,13 +147,16 @@
   (loop for f in (unix:get-files) do (format t "~% :: ~a" (run "file" (format nil "~a" f)))))
 
 (defun file-only (path)
-	(car (last (slip:split-string path #\/))))
+  (car (last (slip:split-string path #\/))))
 
 (defun file-stem (f)
   (car (slip:split-string f #\.)))
 
+(defun file-ext (f)
+  (cadr (slip:split-string f #\.)))
+
 (defun add-ext (f ext)
-	(concatenate 'string f "." ext))
+  (concatenate 'string f "." ext))
 
 (defun less (f)
   (unix:run "less" f))
@@ -168,17 +172,17 @@
     new-path))
 
 (defun join-paths (&rest components)
-	(let ((new-path (car components)))
-		(loop for c in (cdr components) do
-				 (setf new-path (concatenate 'string new-path (if (not (slip:starts-with "/" c)) "/"
-																													"")
-																		 c)))
-		new-path))
+  (let ((new-path (car components)))
+    (loop for c in (cdr components) do
+         (setf new-path (concatenate 'string new-path (if (not (slip:starts-with "/" c)) "/"
+                                                          "")
+                                     c)))
+    new-path))
 
-																				; These file functions are from Practical Common Lisp
+                                        ; These file functions are from Practical Common Lisp
 
 (defun component-present-p (value)
-	(and value (not (eql value :unspecific))))
+  (and value (not (eql value :unspecific))))
 
 (defun directory-pathname-p (p)
   (and
