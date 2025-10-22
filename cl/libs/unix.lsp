@@ -26,7 +26,11 @@
     :less
     :peek-file
     :join-path
-    :rm-ext
+		:join-paths
+		:file-only
+    :file-stem
+		:add-ext
+		
     :pathname-as-file
     :pathname-as-directory
     :list-directory
@@ -141,9 +145,14 @@
 (defun files ()
   (loop for f in (unix:get-files) do (format t "~% :: ~a" (run "file" (format nil "~a" f)))))
 
-(defun rm-ext (f)
-  (let ((parts (slip:split-string f #\.)))
-    (car parts)))
+(defun file-only (path)
+	(car (last (slip:split-string path #\/))))
+
+(defun file-stem (f)
+  (car (slip:split-string f #\.)))
+
+(defun add-ext (f ext)
+	(concatenate 'string f "." ext))
 
 (defun less (f)
   (unix:run "less" f))
@@ -158,10 +167,18 @@
   (let ((new-path (concatenate 'string p1 "/" p2)))
     new-path))
 
-; These file functions are from Practical Common Lisp
+(defun join-paths (&rest components)
+	(let ((new-path (car components)))
+		(loop for c in (cdr components) do
+				 (setf new-path (concatenate 'string new-path (if (not (slip:starts-with "/" c)) "/"
+																													"")
+																		 c)))
+		new-path))
+
+																				; These file functions are from Practical Common Lisp
 
 (defun component-present-p (value)
-  (and value (not (eql value :unspecific))))
+	(and value (not (eql value :unspecific))))
 
 (defun directory-pathname-p (p)
   (and
