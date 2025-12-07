@@ -9,6 +9,3 @@
 (load "/home/rick/git/lisp/libs/unix.lsp")
 (load "/home/rick/git/lisp/libs/grid.lsp")
 
-
-
-

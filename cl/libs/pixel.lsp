@@ -352,7 +352,18 @@
 								 *corn-silk*
 								 *lemon-chiffon*
 								 *light-golden-rod-yellow*))
-	
+
+
+
+;; Send exactly the bytes of MESG, then a single newline, then flush.
+(defun socket-send (mesg)
+  ;; Write the string as-is (no extra quotes like PRINT would add)
+  (write-string mesg *pixel-stream*)
+  ;; Frame boundary
+  (write-char #\Newline *pixel-stream*)
+  ;; Ensure it actually goes out now
+  (finish-output *pixel-stream*))
+
 (defun launch-server (canvas)
   (progn
     (format t "~% [*] Launching Lisp Graphics Server...")
@@ -380,13 +391,12 @@
 	(x-range 0)
 	(y-range 0))
 
-(defun build-screen (width height)
-  (defvar new-screen (make-screen :x-min 0 :x-max width :y-min 0 :y-max height))
-  (setf (screen-x-range new-screen) (- (screen-x-max new-screen)
-                                      (screen-x-min new-screen)))
-  (setf (screen-y-range new-screen) (- (screen-y-max new-screen)
-                                      (screen-y-min new-screen)))
-  new-screen)
+(defun display-screen (s)
+	(format t "~% --- screen ---")
+	(format t "~% x-min: ~a" (screen-x-min s))
+	(format t "~% x-max: ~a" (screen-x-max s))
+	(format t "~% y-min: ~a" (screen-y-min s))
+	(format t "~% y-max: ~a" (screen-y-max s)))
 
                                         ; -- world to handle
                                         ; -- world coordinates.
@@ -400,16 +410,19 @@
 	(x-range 0)
 	(y-range 0))
 
-(defun build-world (xmin xmax ymin ymax)
-	(defvar new-world (make-world :x-min xmin :x-max xmax :y-min ymin :y-max ymax))
-  (setf (world-x-range new-world) (- (world-x-max new-world)
-                                    (world-x-min new-world)))
-  (setf (world-y-range new-world) (- (world-y-max new-world)
-                                    (world-y-min new-world)))
-  new-world)
+(defun display-world (w)
+	(format t "~% --- world ---")
+	(format t "~% x-min: ~a" (world-x-min w))
+	(format t "~% x-max: ~a" (world-x-max w))
+	(format t "~% y-min: ~a" (world-y-min w))
+	(format t "~% y-max: ~a" (world-y-max w)))
 
 (defun get-scale-x (s w)
-  "Return function that computes world to screen transform: x coord"  
+  "Return function that computes world to screen transform: x coord"
+
+	(format t "~% world-x-range: ~a" (world-x-range w))
+	(format t "~% world-y-range: ~a" (world-y-range w))
+		
   (lambda (x)
     (let* ((dist-to-x-min (abs (- (world-x-min w)
                                   x)))
@@ -437,8 +450,31 @@
 	scale-x
 	scale-y)
 
+(defun build-screen (width height)
+
+	(format t "~% building screen with => width: ~A height: ~A" width height)
+  (defvar new-screen (make-screen :x-min 0 :x-max width :y-min 0 :y-max height))
+  (setf (screen-x-range new-screen) (- (screen-x-max new-screen)
+                                       (screen-x-min new-screen)))
+  (setf (screen-y-range new-screen) (- (screen-y-max new-screen)
+                                       (screen-y-min new-screen)))
+  new-screen)
+
+(defun build-world (xmin xmax ymin ymax)
+	(format t "~% building world with => xmin: ~A xmax: ~A ymin: ~A ymax: ~A" xmin xmax ymin ymax)
+	(defvar new-world (make-world :x-min xmin :x-max xmax :y-min ymin :y-max ymax))
+  (setf (world-x-range new-world) (- (world-x-max new-world)
+                                     (world-x-min new-world)))
+  (setf (world-y-range new-world) (- (world-y-max new-world)
+                                     (world-y-min new-world)))
+  new-world)
+
 (defun build-gc (s w)
 	(defvar gc (make-gc :screen s :world w))
+
+	(display-screen s)
+	(display-world w)
+	
 	(setf (gc-scale-x gc) (get-scale-x s w))
 	(setf (gc-scale-y gc) (get-scale-y s w))
 	gc)
@@ -446,17 +482,19 @@
 (defun create-gc (&key (screen nil) (world nil))
 	(let ((gc nil)
 				(screen-width (car screen))
-				 (screen-height (cadr screen))
-				 (world-min (car world))
+				(screen-height (cadr screen))
+				(world-min (car world))
 				(world-max (cadr world)))
+		
 		(format t "~% [*] Pixel: creating graphics context...")
 		(setf gc (pixel:build-gc
 							(pixel:build-screen screen-width screen-height)
-							(pixel:build-world  world-min world-max world-min world-max)))
+							(pixel:build-world world-min world-max world-min world-max)))
 		gc))
 
 (defun init (&key (screen nil) (world nil))
   "Initialize graphics with screen s"
+	
 	(let ((gc (create-gc :screen screen :world world)))
 		(launch-server (list (screen-x-max
 													(gc-screen gc))
@@ -480,7 +518,7 @@
 										 (svref color 1)
 										 (svref color 2)
 										 ))
-  (print mesg *pixel-stream*))
+	(socket-send mesg))
 
 (defmacro wdraw-pixel (px1 py1 color)
 	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
@@ -497,7 +535,7 @@
 										 (svref color 0)
 										 (svref color 1)
 										 (svref color 2)))  
-  (print mesg *pixel-stream*))
+	(socket-send mesg))
 
 (defmacro wdraw-line (px1 py1 px2 py2 color)
 	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
@@ -518,7 +556,7 @@
 										 (svref color 0)
 										 (svref color 1)
 										 (svref color 2)))
-  (print mesg *pixel-stream*))
+	(socket-send mesg))
 
 (defmacro wdraw-circle (px1 py1 radius color)
 	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
@@ -536,7 +574,7 @@
                      (svref color 0)
                      (svref color 1)
                      (svref color 2)))
-  (print mesg *pixel-stream*))
+	(socket-send mesg))
 
 (defmacro wdraw-text (text px1 py1 color)
 	`(let ((x1 (funcall (gc-scale-x gc) ,px1))

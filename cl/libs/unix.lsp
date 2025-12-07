@@ -71,7 +71,7 @@
           ( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
               (error msg)))
           
-    (with-open-file (f lisp-config :direction :input)
+    (with-open-file (f lisp-config :direction :input)			
       (setf lisp-dir (read-line f)))
     lisp-dir))
 
@@ -161,11 +161,15 @@
 (defun less (f)
   (unix:run "less" f))
 
-(defun peek-file (f n)
-  (let ((fh (open f :direction :input)))
-    (loop repeat n do
-      (format t "~% : ~a" (read-line fh)))
-    (close fh)))
+(defun peek-file (f &optional (n 10))
+  (let ((fh (open f :direction :input))
+				 (count 0))
+		(loop for line = (read-line fh nil nil)
+			while (and (< count n)
+							line) do
+			(format t "~% ~a: ~a" count line)
+			(incf count))
+			(close fh)))
 
 (defun join-path (p1 p2)
   (let ((new-path (concatenate 'string p1 "/" p2)))

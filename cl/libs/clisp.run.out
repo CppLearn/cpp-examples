@@ -1,0 +1,33 @@
+total 1532
+-rwxrwxr-x 1 rick rick    279 Sep 22 19:18 clisp_gplot_one_var.sh
+-rwxrwxr-x 1 rick rick    225 Sep 22 19:18 clisp_gplot_scatterplot.sh
+-rwxrwxr-x 1 rick rick    285 Sep 22 19:18 clisp_gplot_xy.sh
+-rw-r--r-- 1 rick rick    883 May 12  2025 clisp-one-var-plot.dat
+-rw-rw-r-- 1 rick rick      0 Nov 20 22:20 clisp.run.out
+-rw-rw-r-- 1 rick rick   6932 Sep 18 22:04 dice.lsp
+drwxrwxr-x 2 rick rick   4096 Sep 16  2024 fft
+-rw-rw-r-- 1 rick rick   2192 Aug  3 20:35 fizzle.lsp
+-rw-rw-r-- 1 rick rick 492436 Nov 12 21:33 garbage_file.png
+-rw-rw-r-- 1 rick rick      0 Apr 19  2025 goofy.txt
+-rw-rw-r-- 1 rick rick   6927 Oct 16 21:13 grid.lsp
+-rw-rw-r-- 1 rick rick     74 Sep 15 12:06 launch-pixel-server.sh
+-rwxrwxr-x 1 rick rick     76 Sep 15 12:06 launch-raylib-server.sh
+-rw-rw-r-- 1 rick rick    342 Nov  3 19:28 load-libs.l
+-rw-rw-r-- 1 rick rick   1420 Dec 15  2024 matrix.lsp
+-rw-rw-r-- 1 rick rick   5438 Oct 30 21:10 moth.lsp
+-rw-rw-r-- 1 rick rick 703969 Aug 25 20:26 nedry.gif
+-rw-rw-r-- 1 rick rick     50 Mar 30  2025 new.macro
+-rw-rw-r-- 1 rick rick    797 May 24 21:16 objects.l
+-rw-rw-r-- 1 rick rick  16970 Oct 29 20:04 pixel.lsp
+-rw-rw-r-- 1 rick rick   8166 Mar 30  2025 pixel.oop.lsp
+-rw-rw-r-- 1 rick rick   4500 Dec 15  2024 pixel_server.py
+lrwxrwxrwx 1 rick rick     44 Mar 17  2025 raylib_server -> /home/rick/git/cpp/Pixel/build/raylib_server
+-rw-rw-r-- 1 rick rick    870 Mar 19  2025 sbcl.unix
+-rw-rw-r-- 1 rick rick  40012 Oct 10 19:35 slip.lsp
+-rw-rw-r-- 1 rick rick   3460 Nov 18  2024 slip-package-reference.md
+-rw-rw-r-- 1 rick rick 195918 Aug 23 09:42 ui-beep.wav
+-rw-rw-r-- 1 rick rick   1241 Oct  9 20:14 unix.clisp.lsp
+-rw-rw-r-- 1 rick rick    647 May 23 18:34 unix.clozure.lsp
+-rw-rw-r-- 1 rick rick  11049 Nov 20 22:19 unix.lsp
+-rw-rw-r-- 1 rick rick    653 Sep 22 19:18 unix.sbcl.lsp
+-rw-rw-r-- 1 rick rick    663 Aug 30 21:57 unix.sbcl.lsp.local

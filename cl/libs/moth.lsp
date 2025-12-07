@@ -25,11 +25,11 @@
 																				; more complex stats go into dice.lsp
 		:sum
 		:avg
-		
-		
+
                                         ; linear algebra
     :dot
-                                        ; interpolation
+                                        ; grids/interpolation
+		:linspace
     :mapval
                                         ; combinatorics 
     :permute
@@ -203,6 +203,15 @@
 	(if (> (length nums) 0)
 			(/ (moth:sum nums) (length nums))
 			0.0))
+
+(defun linspace (start stop &optional (num 50))
+	(loop for i from start to stop by (/ (- stop start) num 1) collect i))
+
+
+
+
+
+
 
 
 
