@@ -1,0 +1,32 @@
+
+@startuml
+skinparam componentStyle rectangle
+
+' Define the components of the neuron
+[Input A1] as A1
+[Input A2] as A2
+[Input An] as An
+() Sum as Summation
+[Activation Function f(x)] as Activation
+[Output y] as Output
+
+' Define the relationships and flow
+A1 -[#blue,bold]-> Summation : *W1* (weight)
+A2 -[#blue,bold]-> Summation : *W2* (weight)
+An -[#blue,bold]-> Summation : *Wn* (weight)
+
+Summation -[#red,bold]-> Activation : x (weighted sum + bias)
+Activation -[#green,bold]-> Output : y (result)
+
+' Optional: Add a note about the bias
+note top of Summation
+  Includes bias (b)
+end note
+
+' Optional: group the core neuron parts
+'together {
+'  Summation
+'  Activation
+'
+
+@enduml

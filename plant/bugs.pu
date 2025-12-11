@@ -1,0 +1,29 @@
+@startuml
+
+class Arthropods {
+
+} 
+class Arachnid {
+
+body segments : cephalothorax, abdomen
+legs : 8
+
+
+}
+class Insect {
+
+body segments : head, thorax, abdomen
+legs : 6
+wings : n
+antennae : n
+
+=
++ fly()
+
+}
+
+Arthropods <|-- Insect
+Arthropods <|-- Arachnid
+
+@enduml
+

@@ -1,0 +1,7 @@
+@startjson
+
+{"a":{"b":{"c":["dog", "cat", {"mouse":"nil"}]}}}
+
+		
+@endjson
+

@@ -1,0 +1,25 @@
+@startuml
+!theme crt-green
+start
+
+:wakeup;
+:take shower;
+:get dressed;
+
+if (weekday?) then (yes)
+   :get badge, get keys, get in car;
+   :commute to work;
+   :workday;
+   :commute home;
+else (no)
+   :go to coffee shop;
+   :come home;
+   :begin organizing;
+endif
+
+:watch TV;
+:go to bed;
+
+stop
+
+@enduml

@@ -1,0 +1,45 @@
+@startuml
+
+object Age
+object Height
+object Weight
+object Strength
+object Speed
+
+' layers
+object Running
+object Tackling
+object Receiving
+object PlayerScore
+
+'Running layer
+Age --> Running: 0.45
+Height --> Running: 0.78
+Weight --> Running: 0.82             
+Strength --> Running: 0.75
+Speed --> Running: 0.73         
+
+'Tackling Layer
+Age --> Tackling : 0.45
+Height --> Tackling : 0.78
+Weight --> Tackling : 0.82
+Strength --> Tackling : 0.8
+Speed --> Tackling : 0.7
+
+'Receiving Layer
+Age --> Receiving: 0.5
+Height --> Receiving: 0.5
+Weight --> Receiving: 0.5
+Strength --> Receiving: 0.5
+Speed --> Receiving: 0.5
+
+Running --> PlayerScore  : 0.8
+Tackling --> PlayerScore : 0.5
+Receiving --> PlayerScore : 0.5
+
+@enduml
+
+
+
+
+

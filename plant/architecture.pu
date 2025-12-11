@@ -1,0 +1,19 @@
+
+@startuml
+allowmixing
+
+component ABC #lightblue
+component XYZ #lightblue
+
+stack {
+  json "mickey mouse" as J #yellow {
+    "<color:blue>Application Support":["logging", "config", "exception handling"],
+    "<color:blue>C++ Utilities":["string utilities","time utilities"],
+    "<back:pink>General Math": ["Red", "Green"]
+  }
+}
+
+ABC --> J
+XYZ --> J
+@enduml
+

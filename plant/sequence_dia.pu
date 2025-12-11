@@ -1,0 +1,73 @@
+@startuml
+
+Age --> Running                       : asdf
+Height --> Running                  : asdf
+Weight --> Running                  : asdf
+Strength --> Running                : asdf
+Speed --> Running                    : asdf
+Acceleration --> Running        : asdf
+Agility --> Running                    : asdf
+Jump --> Running                      : asdf
+40Yard --> Running                  : asdf
+BenchPress --> Running            : asdf
+Endurance --> Running             : asdf
+Catching --> Running                 : asdf
+Route --> Running                       : asdf
+GameIQ --> Running                    : asdf
+Injury --> Running                        : asdf
+Experience --> Running              : asdf
+
+@enduml
+
+Age --> Tackling
+Height --> Tackling
+Weight --> Tackling
+Strength --> Tackling
+Speed --> Tackling
+Acceleration --> Tackling
+Agility --> Tackling
+Jump --> Tackling
+40-Yard --> Tackling
+BenchPress --> Tackling
+Endurance --> Tackling
+Catching --> Tackling
+Route --> Tackling
+GameIQ --> Tackling
+Injury --> Tackling
+Experience --> Tackling
+
+Age --> Receiving
+Height --> Receiving
+Weight --> Receiving
+Strength --> Receiving
+Speed --> Receiving
+Acceleration --> Receiving
+Agility --> Receiving
+Jump --> Receiving
+40-Yard --> Receiving
+BenchPress --> Receiving
+Endurance --> Receiving
+Receiving --> Receiving
+Route --> Receiving
+GameIQ --> Receiving
+Injury --> Receiving
+Experience --> Receiving
+
+Age --> Special_Teams
+Height --> Special_Teams
+Weight --> Special_Teams
+Strength --> Special_Teams
+Speed --> Special_Teams
+Acceleration --> Special_Teams
+Agility --> Special_Teams
+Jump --> Special_Teams
+40-Yard --> Special_Teams
+BenchPress --> Special_Teams
+Endurance --> Special_Teams
+Catching --> Special_Teams
+Route --> Special_Teams
+GameIQ --> Special_Teams
+Injury --> Special_Teams
+Experience --> Special_Teams
+
+@enduml

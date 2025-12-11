@@ -1,0 +1,26 @@
+@startgantt
+
+printscale weekly with calendar date zoom 2
+
+Project starts 2024-03-01
+[Implementation] starts 2024-03-01
+[Implementation] ends 2024-05-31
+[Implementation] is 70% completed
+
+[Practice Release] starts 2024-06-03
+[Practice Release] requires 5 days
+
+[Release] starts 2024-07-31
+[Release] requires 2 days
+
+[Test and Refine] starts at [Practice Release]'s end
+[Test and Refine] ends at [Release]'s start
+
+[Implementation] is colored in Yellow/Green
+[Practice Release] is colored in Pink/Red
+[Release] is colored in Red/Black
+[Test and Refine] is colored in lightblue/Black
+
+@endgantt
+
+

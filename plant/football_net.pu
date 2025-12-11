@@ -1,0 +1,41 @@
+
+@startuml
+skinparam componentStyle rectangle
+
+' Define the components of the neuron
+[Size] as feature1
+[Speed] as feature2
+[Strength]  as feature3
+[Agility] as feature4
+
+' Define the relationships and flow
+
+package "Running" {
+     () Summation as Sum1
+     [Activation Function] as Act1
+     [Running Ability] as Out1
+		 feature1 -[#blue,bold]-> Sum1 : *W1* (for running)
+		 feature2 -[#blue,bold]-> Sum1 : *W2* (for running)
+		 feature3 -[#blue,bold]-> Sum1 : *W3* (for running)
+		 feature4 -[#blue,bold]-> Sum1 : *W4* (for running)
+		 Sum1 -[#red,bold]-> Act1 : x (weighted sum + bias)
+		 Act1 -[#green,bold]-> Out1 : y (result)
+}
+
+package "Tackling" {
+				() Summation as Sum2
+				[Activation Function] as Act2
+				[Tackling Ability] as Out2
+				feature1 -[#blue,bold]-> Sum2 : *W1* (for tackling)
+				feature2 -[#blue,bold]-> Sum2 : *W2* (for tackling)
+				feature3 -[#blue,bold]-> Sum2 : *W3* (for tackling)
+				feature4 -[#blue,bold]-> Sum2 : *W4* (for tackling)
+				Sum2 -[#red,bold]-> Act2 : x (weighted sum + bias)
+				Act2 -[#green,bold]-> Out2 : y (result)
+}
+
+Out1 -[#blue,bold]-> PlayerRating
+Out2 -[#blue,bold]-> PlayerRating
+
+@enduml
+

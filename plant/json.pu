@@ -1,0 +1,13 @@
+@startjson
+
+{"mickey mouse": 25,
+"donald duck": 30,
+"razor duck": [7, 13, 24],
+"another realm": {"dragon":78,
+								 "goblin":16,
+				 				 "spongehead":5,
+								 "gelataneous cube":7}
+}
+
+@endjson
+
