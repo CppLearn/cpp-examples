@@ -21,6 +21,11 @@ git add quick/*.cc
 cp -rpv ~/git/lisp/libs/* ../cl/libs
 git add ../cl/libs/*
 
+#
+# PlantUML
+#
+cp -pv ~/git/micros/plant_uml/*.pu ../plant/
+
 git commit -a -m "updating files..."
 
 
