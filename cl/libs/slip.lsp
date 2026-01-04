@@ -349,9 +349,9 @@
 (defun file-to-list (filename)
   (let ( (lines nil) )
     (with-open-file (f filename :direction :input)
-      (loop for object = (read-line f nil 'end)
-            until (eq object 'end)
-            do (push object lines)))
+      (loop for line = (read-line f nil nil)
+				while line do
+        (push line lines)))
     (reverse lines)))
 
 (defun cut-file (f delim col)
@@ -368,7 +368,7 @@
 (defun list-to-file (lst filename)
   (with-open-file (f filename :direction :output :if-exists :supersede)
     (loop for l in lst do
-          (format f "~%~a" l))))
+          (format f "~a~%" l))))
 
 (defmacro with-file-lines (fname line &body b)
   `(with-open-file (f ,fname :direction :input)

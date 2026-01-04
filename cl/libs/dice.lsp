@@ -221,7 +221,7 @@
 		(* pi-term e-term)))
 
 																			 
-(defun norm-cdf (x mu sigma)
+(defun norm-cdf (x &key (mu 0.0) (sigma 1.0))
 	"CDF of random variable of normal distribution."
 	(* 0.5 (+ 1 (moth:erf (/ (- x mu) (* (sqrt 2.0) sigma))))))
 
