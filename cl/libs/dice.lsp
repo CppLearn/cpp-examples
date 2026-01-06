@@ -44,16 +44,17 @@
 								rstring)))
 		(coerce rstring 'string)))
 
-(defun bin-trial(n x p &optional (verbose nil))
-  "Compute probability of x out of n trials succeeding 
+(defun bin-trial(k
+									&key (n 0) (p 0.0) (verbose nil))
+  "Compute probability of k out of n trials succeeding 
    given probability p of success for each trial."
   (let ((probability
-         (* (moth:choose n x) 
-            (expt p x) 
-            (expt (- 1 p) (- n x)))) )
+         (* (moth:choose n k) 
+            (expt p k) 
+            (expt (- 1 p) (- n k)))) )
     (if verbose
         (format t "~% probability of ~a/~a successes is: ~$ %"
-                x n (* 100 probability)))
+                k n (* 100 probability)))
     probability))
         
 (defun poisson(lambda k)
