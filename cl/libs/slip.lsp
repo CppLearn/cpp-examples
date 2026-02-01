@@ -52,8 +52,9 @@
    :with-file-lines
    :file-matrix
    :matrix-to-file
+	 :make-logger
                                         ; arrays
-   :extract-column
+		:extract-column
 
                                         ; structs
    :magic-struct
@@ -376,21 +377,46 @@
   until (eq ,line 'end)
     do (progn ,@b ))))
 
+(defun universal-time-to-local (universal-time)
+  "Convert universal time to a readable local time string"
+  (multiple-value-bind (second minute hour date month year day-of-week dst-p tz)
+    (decode-universal-time universal-time)
+    (format nil "~D-~2,'0D-~2,'0D ~2,'0D:~2,'0D:~2,'0D"
+      year month date hour minute second)))
+
+(defun make-logger (filename)
+	(let ((fh (open filename :direction :output
+							:if-does-not-exist :create
+							:if-exists :append)))
+		(if fh
+			;; Return a closure that can perform
+			;; operations on the stream.
+			#'(lambda (operation &rest mesg)
+					(case operation
+						(:is-open (not (null fh)))
+						(:log (format fh "~%[~A] ~A"
+										(universal-time-to-local
+											(get-universal-time))
+										(car mesg)))
+						(:close (close fh) (setf sh nil))
+						))
+			nil)))
+
 ;;   [Array Functions]
 
 (defun file-matrix (fname delim)
-"parse delimited file (fname) with delimeter (delim) into a 2-d array."
+	"parse delimited file (fname) with delimeter (delim) into a 2-d array."
   (let* ((row 0) (flist (slip:file-to-list fname))
-         (nrows (length flist))
-         (firstrow (nth 0 flist))
-         (ncols (length (slip:split-string firstrow delim)))
-         (farray (make-array (list nrows ncols) :initial-element nil)))
+					(nrows (length flist))
+					(firstrow (nth 0 flist))
+					(ncols (length (slip:split-string firstrow delim)))
+					(farray (make-array (list nrows ncols) :initial-element nil)))
     (loop for line in flist do
-         (progn
-           (setf columns (slip:split-string line delim))
-           (loop for col from 0 to (1- ncols) do
-                (setf (aref farray row col) (nth col columns)))
-           (incf row)))
+      (progn
+        (setf columns (slip:split-string line delim))
+        (loop for col from 0 to (1- ncols) do
+          (setf (aref farray row col) (nth col columns)))
+        (incf row)))
     farray))
 
 (defun matrix-to-file (array fname)
@@ -554,13 +580,15 @@
                  (push obj objects)))
       (reverse objects))))
 
+
+
 ;;    [Test Helpers]
 
 (defun creature-list ()
   "Return list of creatures to use as test data."
   (list 'dragon 'mermaid 'gorgon 'griffin 'minotaur 
-        'kraken 'cyclops 'troll 'orc 'goblin 'unicorn
-        'fawn 'siren 'vampire 'werewolf))
+    'kraken 'cyclops 'troll 'orc 'goblin 'unicorn
+    'fawn 'siren 'vampire 'werewolf))
 
 ;; (defmacro with-timing (&body body)
 ;;   "A macro that wraps a body of code and prints the time taken to execute.

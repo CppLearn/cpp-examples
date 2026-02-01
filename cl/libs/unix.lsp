@@ -54,8 +54,8 @@
     :mac-figlet
     :fig
     :mac-fig
-
     :nedry
+		:ui-beep
     
     ))
 
@@ -324,11 +324,14 @@
 
                                         ; misc
 
-(defun message (msg)
+(defun ui-beep ()
   (let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
-    (play-sound ui-beep)
-    (slip:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) slip:green)
-    (slip:color msg slip:blue)))
+    (play-sound ui-beep)))
+
+(defun message (msg)
+	(ui-beep)
+  (slip:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) slip:green)
+  (slip:color msg slip:blue))
 
 (defun figlet (font mesg)
   (if (probe-file "/usr/bin/figlet")
