@@ -48,6 +48,10 @@
     
                                         ; sounds
     :play-sound
+		:play-note
+		:music-notes
+		:init-music-notes
+		:play-music-note
     :message   
                                         ; misc
     :figlet
@@ -322,11 +326,45 @@
                   (t "aplay --quiet ~a")))  
   (unix:run (format nil cmd wav)))
 
+																				; musical
+																				; notes
+
+
+
+(defun play-note (&key (freq 500) (time 500))
+	(let ((cmd (format nil "play-note ~a ~a" freq
+	time)))
+		(unix:run cmd)))
+
+(defvar music-notes (make-hash-table :test 'equal))
+
+(defun init-music-notes ()
+	(slip:store-hash music-notes "A3" 220)
+	(slip:store-hash music-notes "D4" 293)
+	(slip:store-hash music-notes "E4" 329)
+	(slip:store-hash music-notes "F4" 349)
+	(slip:store-hash music-notes "G4" 392)
+	(slip:store-hash music-notes "A4" 440)
+	(slip:store-hash music-notes "B4" 493)
+	(slip:store-hash music-notes "C5" 523)
+	(slip:store-hash music-notes "D5" 587)
+	(slip:store-hash music-notes "E5" 659)
+	(slip:store-hash music-notes "F5" 698)
+	(slip:store-hash music-notes "G5" 784))
+	
+(defun play-music-note (note time)
+	(slip:show-hash music-notes)
+	(format t "~% playing freq: ~A for: ~A" (gethash
+		note music-notes) time)
+	(play-note
+		:freq (gethash note music-notes)
+		:time time))
                                         ; misc
 
 (defun ui-beep ()
   (let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
     (play-sound ui-beep)))
+
 
 (defun message (msg)
 	(ui-beep)
