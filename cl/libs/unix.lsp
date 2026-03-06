@@ -60,6 +60,8 @@
     :mac-fig
     :nedry
 		:ui-beep
+																				; speech
+		:speak
     
     ))
 
@@ -393,4 +395,34 @@
   (let ((nedry-gif (concatenate 'string (get-lisp-dir) "/" "nedry.gif")))
     (if (probe-file nedry-gif) (unix:run (format nil "gifview --animate ~A" nedry-gif))
       (format t "~% Ah Ah Ah... You didn't say the magic word!"))))
+
+;; Speech
+
+(defun detect-tts-cmd ()
+  (cond
+    ((probe-file "/usr/bin/espeak-ng") "/usr/bin/espeak-ng")
+    ((probe-file "/usr/bin/espeak") "/usr/bin/espeak")
+    ((probe-file "/usr/bin/say") "/usr/bin/say")
+    (t nil)))
+
+(defparameter *tts-cmd* (detect-tts-cmd))
+
+(defun trim-word (w)
+  (string-trim '(#\Space #\Tab #\Newline #\, #\. #\! #\? #\; #\: #\" #\') w))
+
+(defun speak-word (word &key (rate 170) (pitch 50) (gap 5))
+  (let ((w (trim-word word)))
+    (when (and *tts-cmd* (> (length w) 0))
+      (cond
+        ((string= *tts-cmd* "/usr/bin/say")
+         ;; GNUstep say on Linux often has no -r/-p/-g flags.
+         (unix:run *tts-cmd* w))
+        (t
+         (unix:run *tts-cmd* (format nil "-s ~a -p ~a -g ~a ~a" rate pitch gap w)))))))
+
+(defun speak (text &key (rate 170) (pitch 50) (gap 5))
+  (if (null *tts-cmd*)
+      (format t "~%No TTS program found. Install espeak-ng, espeak, or say.")
+      (dolist (word (slip:split-string text #\Space))
+        (speak-word word :rate rate :pitch pitch :gap gap))))
 
