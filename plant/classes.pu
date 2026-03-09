@@ -1,0 +1,35 @@
+@startuml
+skinparam componentStyle rectangle
+
+' Define external components
+
+class Car {
+
+			make : str
+			model : str
+			hp : int
+			void drive()
+}
+
+package Cryptid_Research {
+
+abstract class Cryptid { 
+
+}
+
+Cryptid <|-- Sea_Monster
+Cryptid <|-- Hominids
+class Hominids
+class Sea_Monster{
+
+}
+
+}
+
+Sales - Car : sells >
+Driver -- Car : drives >
+Car *- Wheel : has 4 >
+Car -- Person : < owns
+
+@enduml
+
