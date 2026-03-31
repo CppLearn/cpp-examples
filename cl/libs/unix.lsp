@@ -31,7 +31,8 @@
     :file-stem
     :file-ext
     :add-ext
-    
+
+    :pwd
     :pathname-as-file
     :pathname-as-directory
     :list-directory
@@ -163,6 +164,9 @@
 
 (defun add-ext (f ext)
   (concatenate 'string f "." ext))
+
+(defun pwd ()
+	(unix:run "pwd"))
 
 (defun less (f)
   (unix:run "less" f))
