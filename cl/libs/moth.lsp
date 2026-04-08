@@ -43,6 +43,9 @@
     :primep
     :slow-primep
     :sophiep
+
+																				; simple math visualizations
+		:bar-chart
     
     )) ; end package
 
@@ -207,12 +210,7 @@
 (defun linspace (start stop &optional (num 50))
 	(loop for i from start to stop by (/ (- stop start) num 1) collect i))
 
-
-
-
-
-
-
-
-
-
+(defun bar-chart (counts)
+	"draw bar-chart from list of numbers."
+	(loop for score in counts do
+		(format t "~% ~6@A ~V,,,'*A" score (1+ score) ":")))

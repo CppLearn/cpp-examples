@@ -1,2 +1,0 @@
-[4]> (defmacro new(var)
-      `(defvar ,new nil))
