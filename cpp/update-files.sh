@@ -29,6 +29,7 @@ cp -rpv ~/git/lisp/libs/unix.clisp.lsp ../cl/libs
 cp -rpv ~/git/lisp/libs/unix.clozure.lsp ../cl/libs
 cp -rpv ~/git/lisp/libs/unix.lsp ../cl/libs
 cp -rpv ~/git/lisp/libs/unix.sbcl.lsp ../cl/libs
+cp -rpv ~/git/lisp/libs/timewarp.lsp ../cl/libs
 
 git add ../cl/libs/*.lsp
 
