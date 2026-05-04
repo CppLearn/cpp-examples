@@ -31,7 +31,9 @@
     :file-stem
     :file-ext
     :add-ext
-
+																				; args parsing
+		:args-master
+		
     :pwd
     :pathname-as-file
     :pathname-as-directory
@@ -300,6 +302,43 @@
            ((funcall test name) (funcall fn name)))))
     (walk (pathname-as-directory dirname))))
 
+																				; more arg parsing
+(defun get-keyword (arg)
+ 	"return keyword is-keyword-p"
+ 	(let (is-keyword-p
+				keyword
+				(colon (search ":" arg)))
+		(when (and
+						(not (null colon))
+						(= 0 colon))
+ 			(setf is-keyword-p t)
+ 			(setf keyword (subseq arg 1 (length arg))))
+		(values keyword is-keyword-p)))
+
+(defun args-master (args usage)
+	(let ((args-hash (make-hash-table :test #'equal))
+				 arg-pairs
+				 keyword
+				 is-keyword)
+
+		(when (/= (mod (length args) 2) 0)
+			(funcall usage)
+			(error "keyword/val parameters must come in pairs!"))
+		
+		(loop for (key val) on args by #'cddr do
+																				; check keyword
+ 			(multiple-value-bind (keyword is-keyword) (get-keyword key)
+				(unless is-keyword
+					(funcall usage)
+					(error "keyword expected!")))
+																				; check val
+			(multiple-value-bind (keyword is-keyword) (get-keyword val)
+				(when is-keyword
+					(funcall usage)
+					(error "two keywords detected in a row!")))
+			(slip:store-hash args-hash (coerce key 'string) val))
+		args-hash))
+
                                         ; file edits
 
 (defun libedit (lib)
@@ -308,6 +347,7 @@
 (defun gedit-file (f)
   (let ((args (concatenate 'string f " &")))
     (run "gedit" args)))
+
 
                                         ; utilities
 (defun date ()

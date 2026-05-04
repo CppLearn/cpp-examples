@@ -67,8 +67,9 @@
    :show-hash-type
    :sum-hash
    :stats-hash
+	 :make-hasher
                                         ; bits
-   :make-bit-array 
+		:make-bit-array 
    :bit-set
    :bit-set?
 
@@ -535,6 +536,15 @@
       (format t "~% s (sample):             ~,4f" s)
       (format t "~% z-scores:")
       (slip:show-hash z-scores))))
+
+(defun make-hasher (ht)
+	"Return a getter function for a hash-table."
+	(lambda (key)
+		(multiple-value-bind (value present-p)
+			(gethash key ht)
+			(if present-p
+				value
+				nil))))
 
 ;; bits
 
