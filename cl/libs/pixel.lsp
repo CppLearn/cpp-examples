@@ -20,6 +20,8 @@
 		;; -- graphics context --
 		:build-gc
     :init
+		:scale-x
+		:scale-y
     :shutdown
     ;;
     ;; -- methods --
@@ -33,7 +35,15 @@
 		:wdraw-line
 		:wdraw-circle
 		:wdraw-text
-		
+
+		;; -- bitmaps --
+
+		:bitmap
+		:draw-megapixel
+		:draw-bitmap
+		:load-bitmap
+		:load-c64-sprite
+
     ;;
     ;; -- colors --
     :colors   
@@ -503,6 +513,12 @@
 		(format t "~% [*] Connecting Lisp to Pixel Server with ip: ~a socket: ~a" *ip* *socket*)
 		(defvar *pixel-stream* (ext:socket-connect *socket* *ip*))))
 
+(defmacro scale-x (wx)
+	`(funcall (gc-scale-x gc) ,wx))
+
+(defmacro scale-y (wy)
+	`(funcall (gc-scale-y gc) ,wy))
+
 (defun shutdown ()
   (close *pixel-stream*))
 
@@ -580,4 +596,104 @@
 	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
 				 (y1 (funcall (gc-scale-y gc) ,py1)))
 		 (pixel:draw-text ,text x1 y1 ,color)))
+
+; //  ---------------------------------------------------------------  //
+; //  Bitmap Support                                                   //
+; //  ---------------------------------------------------------------  //
+
+(defstruct bitmap
+  "Define a bitmap (sprite)"
+  height width
+  data)
+
+(defun draw-megapixel (wx wy color)
+  (let ((x (pixel:scale-x wx))
+         (y (pixel:scale-y wy)))
+    
+    (pixel:draw-pixel (1- x) (1- y) color)
+    (pixel:draw-pixel x (1- y) color)
+    (pixel:draw-pixel (1+ x) (1- y) color)
+                                        ;
+    (pixel:draw-pixel (1- x) y color)
+    (pixel:draw-pixel x y color)
+    (pixel:draw-pixel (1+ x) y color)
+                                        ;
+    (pixel:draw-pixel (1- x) (1+ y) color)
+    (pixel:draw-pixel x (1+ y) color)
+    (pixel:draw-pixel (1+ x) (1+ y) color)))
+                                      
+(defun draw-bitmap (bm color x y)
+  "Draw a bitmap on the screen."
+  (let* ( (height (bitmap-height bm))
+          (width (bitmap-width bm))
+          (half-height (/ height 2))
+          (half-width (/ width 2)))
+    (loop for i from 0 below height do
+                                        ; start half-way down so that it is centered
+      (setf bm-y (+ (- y half-height) i))
+      (loop for j from 0 below width do
+        (progn
+                                        ; subtract half width so that x is at the mid-point.
+          (setf bm-x (+ (- x half-width) j))
+          (if (= (digit-char-p (aref (bitmap-data bm) i j)) 1) ; is bit set ?
+            (progn
+              (draw-megapixel bm-x bm-y color))))))))
+  
+(defun load-bitmap (fname height width)
+  "load a bitmap from a file"
+  (let ((bitmap (make-bitmap :height height :width width
+                  :data (make-array (list height width) :initial-element 0)))
+         (bm_f (open fname :direction :input))
+         (row 0)
+         (col 0))
+    
+    (loop for line = (read-line bm_f nil nil)
+      while line do
+      (progn
+        (loop for c across line do
+          (progn
+            (if (and (< col width)
+                  (< row height))
+              (setf (aref (bitmap-data bitmap) row col) c))
+            (incf col)))
+        (incf row)
+        (setf col 0)))
+    (close bm_f)
+    bitmap))
+
+(defun load-c64-sprite (fname height width)
+  (with-open-file (sf fname
+                    :direction :input
+                    :if-does-not-exist :error)
+    (let ((binary-bytes nil)
+           (bitmap (make-bitmap :height height :width width
+                     :data (make-array (list height width) :initial-element 0)))
+           (i 0))
+      
+      ;; read bytes from file (integer), convert to binary bytes
+      (loop for line = (read-line sf nil nil)
+        while line do
+        (progn
+          (let (bin-string
+                 (bin-bytes nil)
+                 (bytes (slip:split-string line #\,)))
+            (loop for byte in bytes do
+              (incf i)
+              (setf bin-string (write-to-string (parse-integer byte) :base 2))
+              (push (format nil "~8,1,0,'0@A" bin-string) binary-bytes)))))
+      ;;                                        
+      (setf binary-bytes (reverse binary-bytes))
+      
+      ; store binary bytes into bitmap array.
+      (let ((row 0) (col 0))
+        (loop for byte in binary-bytes do
+          (format t "~% storing byte: ~a" byte)         
+          (loop for c across byte do
+            (setf (aref (bitmap-data bitmap) row col) c)
+            (incf col)
+            (when (= col width)
+              (setf col 0)
+              (incf row)))))
+      bitmap)))
+
 
