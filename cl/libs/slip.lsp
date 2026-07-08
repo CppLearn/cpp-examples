@@ -43,8 +43,9 @@
    :shuffle
    :one-of
    :list->array
+	 :list-cols
                                         ; files
-   :file-loop
+		:file-loop
    :process-file
    :file-to-list
    :cut-file
@@ -329,14 +330,23 @@
   "Convert a list to an array."
   (make-array (length l) :initial-contents l))
 
+(defun list-cols (lst n-cols width)
+	"Print a list out as a table of cols."
+  (let ((fmt (format nil "~~~D<~~A~~>~~:[~~;~~%~~]" width)))
+    (format t (concatenate 'string "~{" fmt "~}") 
+      (loop for item in lst
+        for i from 1
+        collect item
+        collect (zerop (mod i n-cols))))))
+
 ;;   [File Functions]
 
 (defun file-loop(filename func)
   "Call function on lines in a file."
   (with-open-file (f filename :direction :input)
     (loop for line = (read-line f nil 'stop)
-       until (eq line 'stop)
-       do (funcall func line))))
+      until (eq line 'stop)
+      do (funcall func line))))
 
 (defun process-file(filename func delim)
   "Process lines in a file with a function that uses delimeter."

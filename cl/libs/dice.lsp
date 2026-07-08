@@ -9,8 +9,8 @@
   ( :use :common-lisp :slip :moth )
 
   ( :export
-		:rand-int
-		:rand-string
+    :rand-int
+    :rand-string
     :bin-trial
     :poisson
     :repeats
@@ -21,31 +21,30 @@
     :stddev-list
     :mean-dev-list
     :assign-probs
-		:random-get-event
+    :random-get-event
     :regression-xy
-		:normal-dist
-		:norm-cdf
-		))
+    :normal-dist
+    :norm-cdf
+    ))
 
 (in-package dice)
 
 (defun rand-int (start stop)
-	(let ( (r (random 1.0))
-				 (width (- stop start)) )
-		(+ start (round (* r width)))))
+  (let ( (r (random 1.0))
+         (width (- stop start)) )
+    (+ start (round (* r width)))))
 
 (defun rand-string (n)
-	(let ((rstring nil))
-		(loop repeat n do
-			(if (> 0.5 (random 1.0))
-					(push (code-char (dice:rand-int 40 90))
-								rstring)
-					(push (code-char (dice:rand-int 97 122))
-								rstring)))
-		(coerce rstring 'string)))
+  (let ((rstring nil))
+    (loop repeat n do
+      (if (> 0.5 (random 1.0))
+          (push (code-char (dice:rand-int 40 90))
+                rstring)
+          (push (code-char (dice:rand-int 97 122))
+                rstring)))
+    (coerce rstring 'string)))
 
-(defun bin-trial(k
-									&key (n 0) (p 0.0) (verbose nil))
+(defun bin-trial(k n &key(p 0.0) (verbose nil))
   "Compute probability of k out of n trials succeeding 
    given probability p of success for each trial."
   (let ((probability
@@ -113,7 +112,7 @@
    Store probabilities in hash table with event name
    as key."
 
-	(setf *random-state* (make-random-state t))
+  (setf *random-state* (make-random-state t))
   (let ((budget 1.0) ; total of probabilities must sum to 1.
         (p 0.0)      ; temp probability for single event.
         (probs (make-hash-table)))
@@ -132,36 +131,36 @@
     probs))
 
 (defun percent-to-count (p)
-	(let* ((rounded (format nil "~,2f" p))
-				 (rounded-start (1+ (search "." rounded)))
-				 (rounded-end (length rounded)))
-		(parse-integer (subseq rounded rounded-start rounded-end))))
+  (let* ((rounded (format nil "~,2f" p))
+         (rounded-start (1+ (search "." rounded)))
+         (rounded-end (length rounded)))
+    (parse-integer (subseq rounded rounded-start rounded-end))))
 
 (defun probs-to-counts(events-ht)
-	"Randomly choose a function stored in a probability hash based on the assigned probability."
-	(let ((copy-ht (make-hash-table)))
-		(loop for k being the hash-keys of events-ht do
-			(slip:store-hash copy-ht k (percent-to-count (gethash k events-ht))))
-		copy-ht))
+  "Randomly choose a function stored in a probability hash based on the assigned probability."
+  (let ((copy-ht (make-hash-table)))
+    (loop for k being the hash-keys of events-ht do
+      (slip:store-hash copy-ht k (percent-to-count (gethash k events-ht))))
+    copy-ht))
 
 (defun random-get-event (func-probs-ht)
-	"Randomly run a function stored in a hash-table. 
+  "Randomly run a function stored in a hash-table. 
    Functions are stored as the keys, 
    probabilies as the values. see (dice:assign-probs)
    Likelihood is based on the probability."
-	
-	(setf *random-state* (make-random-state t))
-	(let* ((counts-ht (probs-to-counts func-probs-ht))
-				 (total-points (slip:sum-hash counts-ht))
-				 (rand-index (random total-points))
-				 (event-array (make-array total-points :initial-element nil))
-				 (array-index 0))
-					
-		(loop for k being the hash-keys of counts-ht do
-			(loop for i from 0 to (1- (gethash k counts-ht)) do
-				(setf (aref event-array array-index) k)
-				(incf array-index)))
-		(aref event-array rand-index)))
+  
+  (setf *random-state* (make-random-state t))
+  (let* ((counts-ht (probs-to-counts func-probs-ht))
+         (total-points (slip:sum-hash counts-ht))
+         (rand-index (random total-points))
+         (event-array (make-array total-points :initial-element nil))
+         (array-index 0))
+          
+    (loop for k being the hash-keys of counts-ht do
+      (loop for i from 0 to (1- (gethash k counts-ht)) do
+        (setf (aref event-array array-index) k)
+        (incf array-index)))
+    (aref event-array rand-index)))
 
 (defun entropy-hash (h)
   "Compute the entropy of a hash table. 
@@ -184,7 +183,7 @@
     (float (/ sum (length data)))))
 
 (defun regression-xy (data)
-	"Compute linear regression using (x, y) pairs. 
+  "Compute linear regression using (x, y) pairs. 
    Output: 
           intercept
           slope
@@ -213,18 +212,18 @@
     (format t "~% compute-b: b: ~a" b)
     (values a b)))
 
-																				; Distributions
+                                        ; Distributions
 
 (defun normal-dist (x &optional (mu 0) (sigma 1.0))
-	"Formula of normal distribution for single variable x."
-	(let ( (pi-term (/ 1 (* sigma (sqrt (* 2 pi)))))
-				 (e-term (exp (* (- (/ 1 2)) (expt (/ (- x mu) sigma) 2)))))
-		(* pi-term e-term)))
+  "Formula of normal distribution for single variable x."
+  (let ( (pi-term (/ 1 (* sigma (sqrt (* 2 pi)))))
+         (e-term (exp (* (- (/ 1 2)) (expt (/ (- x mu) sigma) 2)))))
+    (* pi-term e-term)))
 
-																			 
+                                       
 (defun norm-cdf (x &key (mu 0.0) (sigma 1.0))
-	"CDF of random variable of normal distribution."
-	(* 0.5 (+ 1 (moth:erf (/ (- x mu) (* (sqrt 2.0) sigma))))))
+  "CDF of random variable of normal distribution."
+  (* 0.5 (+ 1 (moth:erf (/ (- x mu) (* (sqrt 2.0) sigma))))))
 
 
 
