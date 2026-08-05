@@ -20,6 +20,7 @@
     :fact
     :est-pi-0
 		:erf
+		:nearby
 
 																				; simple stats
 																				; more complex stats go into dice.lsp
@@ -53,6 +54,7 @@
 
 (defconstant one-rad (/ pi 180.0))
 (defconstant log10e 2.303)
+(defconstant *nearby-tol* 1e-8)
 
 (defun sgn (n)
   (cond
@@ -198,9 +200,14 @@
 											 (+ (* (+ (* (+ (* (+ a4 (* a5 tt)) tt) a3) tt) a2) tt) a1)))))
 		y))
 
+(defun nearby (a b)
+	(if (< (abs (- a b)) *nearby-tol*)
+		t
+		nil))
+	
 (defun sum (nums)
 	(if (listp nums)
-			(reduce #'+ nums)))
+		(reduce #'+ nums)))
 
 (defun avg (nums)
 	(if (> (length nums) 0)

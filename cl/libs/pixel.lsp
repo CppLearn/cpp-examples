@@ -35,6 +35,8 @@
 		:wdraw-line
 		:wdraw-circle
 		:wdraw-text
+		:draw-image
+		:wdraw-image
 
 		;; -- bitmaps --
 
@@ -596,6 +598,20 @@
 	`(let ((x1 (funcall (gc-scale-x gc) ,px1))
 				 (y1 (funcall (gc-scale-y gc) ,py1)))
 		 (pixel:draw-text ,text x1 y1 ,color)))
+
+; //  ---------------------------------------------------------------  //
+; //  image                                                            //
+; //  ---------------------------------------------------------------  //
+
+(defun draw-image (x y filename &key (x-size 0) (y-size 0) (rotate 0))
+  (setf mesg (format nil "{ IMAGE ~a ~a ~a ~a ~a ~a }"
+                     x y x-size y-size rotate filename))
+  (socket-send mesg))
+
+(defmacro wdraw-image (px1 py1 filename &key (x-size 0) (y-size 0) (rotate 0))
+  `(let ((x1 (funcall (gc-scale-x gc) ,px1))
+         (y1 (funcall (gc-scale-y gc) ,py1)))
+     (pixel:draw-image x1 y1 ,filename :x-size ,x-size :y-size ,y-size :rotate ,rotate)))
 
 ; //  ---------------------------------------------------------------  //
 ; //  Bitmap Support                                                   //

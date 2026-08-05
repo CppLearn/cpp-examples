@@ -11,7 +11,7 @@
   ( :export
     :rand-int
     :rand-string
-    :bin-trial
+    :binomial
     :poisson
     :repeats
     :entropy-hash
@@ -44,7 +44,7 @@
                 rstring)))
     (coerce rstring 'string)))
 
-(defun bin-trial(k n &key(p 0.0) (verbose nil))
+(defun binomial(k n &key(p 0.0) (verbose nil))
   "Compute probability of k out of n trials succeeding 
    given probability p of success for each trial."
   (let ((probability
