@@ -366,16 +366,15 @@
 
                                         ; sounds
 (defun play-sound (wav &key (show nil show-p))
-  (if show-p
-      (format t "~% playing sound: ~a" wav))
-  (setf cmd (cond ((is-mac-p) "afplay ~a")
-                  (t "aplay --quiet ~a")))  
-  (unix:run (format nil cmd wav)))
+	(when (probe-file "/dev/snd/controlC0")
+		(if show-p
+			(format t "~% playing sound: ~a" wav))
+		(setf cmd (cond ((is-mac-p) "afplay ~a")
+                (t "aplay --quiet ~a")))  
+		(unix:run (format nil cmd wav))))
 
 																				; musical
 																				; notes
-
-
 
 (defun play-note (&key (freq 500) (time 500))
 	(let ((cmd (format nil "play-note ~a ~a" freq
