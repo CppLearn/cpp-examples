@@ -9,8 +9,10 @@
   ( :use :common-lisp ) 
 
   ( :export 
-                                        ; general
-   :hello
+
+		:get-lib-dir                        ; return the directory
+																				; where our lisp libs reside
+		:hello
 	 :blank-line
 	 :bin-dir
    :puts    
@@ -124,6 +126,14 @@
 (in-package slip)
 
 ;;   [General Purpose Functions]
+
+(defparameter *lib-directory*
+  (namestring (make-pathname :name nil
+								:type nil
+								:defaults *load-truename*)))
+
+(defun get-lib-dir ()
+	*lib-directory*)
 
 (defun hello ()
   (write-line "hello!  Package slip is available!"))

@@ -65,24 +65,9 @@
 		:ui-beep
 																				; speech
 		:speak
-    
     ))
 
 (in-package unix)
-
-(defun get-lisp-dir ()
-  (let ((lisp-config nil)
-        (lisp-dir nil)
-        (f nil))
-    (cond ( (probe-file "/home/rick/.lispdir") (setf lisp-config "/home/rick/.lispdir") )
-          ( (probe-file "/home/rickcde/.lispdir") (setf lisp-config "/home/rickcde/.lispdir" ))
-          ( (probe-file "/Users/rickcde/.lispdir") (setf lisp-config "/Users/rickcde/.lispdir"))
-          ( t (setf msg (format nil "~%~% :: [warning] .lispdir not found! create containing path to lisp libraries."))
-              (error msg)))
-          
-    (with-open-file (f lisp-config :direction :input)			
-      (setf lisp-dir (read-line f)))
-    lisp-dir))
 
 (defvar unix-dialect-fname)
 (defvar unix-final-fname)
@@ -91,8 +76,9 @@
 #+sbcl  (setf unix-dialect-fname "unix.sbcl.lsp")
 #+sbcl  (require :sb-posix)
 #+CCL   (setf unix-dialect-fname "unix.clozure.lsp")
+																				; 
+(setf unix-final-name (concatenate 'string (slip:get-lib-dir) "/" unix-dialect-fname))
 
-(setf unix-final-name (concatenate 'string (get-lisp-dir) "/" unix-dialect-fname))
 (format t "~% ---------------------------------------------------------------------")
 (format t "~% loading unix dialect: ~A" unix-final-name)
 (format t "~% ---------------------------------------------------------------------")
@@ -342,7 +328,7 @@
                                         ; file edits
 
 (defun libedit (lib)
-  (gedit-file (concatenate 'string (get-lisp-dir) "/" lib ".lsp")))
+  (gedit-file (concatenate 'string (slip:get-lib-dir) "/" lib ".lsp")))
 
 (defun gedit-file (f)
   (let ((args (concatenate 'string f " &")))
@@ -407,7 +393,7 @@
                                         ; misc
 
 (defun ui-beep ()
-  (let ((ui-beep (concatenate 'string (get-lisp-dir) "/" "ui-beep.wav")))
+  (let ((ui-beep (concatenate 'string (slip:get-lib-dir) "/" "ui-beep.wav")))
     (play-sound ui-beep)))
 
 
@@ -435,7 +421,7 @@
     (format t "~% ~a" line)))
 
 (defun nedry ()
-  (let ((nedry-gif (concatenate 'string (get-lisp-dir) "/" "nedry.gif")))
+  (let ((nedry-gif (concatenate 'string (slip:get-lib-dir) "/" "nedry.gif")))
     (if (probe-file nedry-gif) (unix:run (format nil "gifview --animate ~A" nedry-gif))
       (format t "~% Ah Ah Ah... You didn't say the magic word!"))))
 
