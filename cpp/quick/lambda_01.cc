@@ -14,6 +14,5 @@ for( const auto& c : creatures ) {
 										{ std::cout << "\n >> " << c; }, c);
  }
 
-
 std::cout << "\n";
 
