@@ -75,8 +75,9 @@
 		:make-bit-array 
    :bit-set
    :bit-set?
+	 :bits-to-int
 
-   :save-to-file                        ; save/load funcs
+	 :save-to-file                        ; save/load funcs
    :open-file
    :read-objects
 
@@ -569,15 +570,23 @@
 ;; bits
 
 (defun make-bit-array (size)
-  (make-array size :element-type 'bit))
+  (make-array size
+		:element-type 'bit
+		:initial-element 0))
 
-(defun bit-set? (flags bit)
-  (let ((size (1- (length flags))))
-    (equal (aref flags (- size bit)) 1)))
+(defun bit-set? (bits bit)
+  (let ((size (1- (length bits))))
+    (equal (aref bits (- size bit)) 1)))
 
-(defun bit-set (flags bit)
-  (let ((size (1- (length flags))))
-    (setf (aref flags (- size bit)) 1)))
+(defun bit-set (bits bit)
+  (let ((size (1- (length bits))))
+    (setf (aref bits (- size bit)) 1)))
+
+(defun bits-to-int (bits)
+	(reduce (lambda (value bit)
+            (+ (ash value 1) bit))
+    bits
+    :initial-value 0))
 
 ;;   [Load/Save Functions]
 
@@ -586,8 +595,8 @@
   (let ( (f nil)
          (*print-readably* t))
     (if (probe-file fname)
-        (setf f (open fname :direction :output :if-exists :append))
-        (setf f (open fname :direction :output :if-exists :supersede)))
+      (setf f (open fname :direction :output :if-exists :append))
+      (setf f (open fname :direction :output :if-exists :supersede)))
     (print obj f)
     (close f)))
 
