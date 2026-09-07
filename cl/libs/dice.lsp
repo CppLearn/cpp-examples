@@ -6,7 +6,7 @@
 
 (defpackage :dice
 
-  ( :use :common-lisp :slip :moth )
+  ( :use :common-lisp :warp :moth )
 
   ( :export
     :rand-int
@@ -118,14 +118,14 @@
         (probs (make-hash-table)))
 
     (loop for e in events do 
-          (slip:store-hash probs e 0.0))
+          (warp:store-hash probs e 0.0))
 
     (loop while (> budget 0.0) do
       (setf p (random 0.1))
       (if (> p budget) 
           (setf p budget) )
-      (setf choice (slip:random-choice events))    
-      (slip:store-hash probs choice 
+      (setf choice (warp:random-choice events))    
+      (warp:store-hash probs choice 
         (+ (gethash choice probs) p))
       (decf budget p) )
     probs))
@@ -140,7 +140,7 @@
   "Randomly choose a function stored in a probability hash based on the assigned probability."
   (let ((copy-ht (make-hash-table)))
     (loop for k being the hash-keys of events-ht do
-      (slip:store-hash copy-ht k (percent-to-count (gethash k events-ht))))
+      (warp:store-hash copy-ht k (percent-to-count (gethash k events-ht))))
     copy-ht))
 
 (defun random-get-event (func-probs-ht)
@@ -151,7 +151,7 @@
   
   (setf *random-state* (make-random-state t))
   (let* ((counts-ht (probs-to-counts func-probs-ht))
-         (total-points (slip:sum-hash counts-ht))
+         (total-points (warp:sum-hash counts-ht))
          (rand-index (random total-points))
          (event-array (make-array total-points :initial-element nil))
          (array-index 0))

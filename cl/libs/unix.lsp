@@ -7,7 +7,7 @@
 
 (defpackage :unix
 
-  ( :use :common-lisp :slip )
+  ( :use :common-lisp :warp )
   ( :export 
                                         ; OS
     :get-args
@@ -77,7 +77,7 @@
 #+sbcl  (require :sb-posix)
 #+CCL   (setf unix-dialect-fname "unix.clozure.lsp")
 																				; 
-(setf unix-final-name (concatenate 'string (slip:get-lib-dir) "/" unix-dialect-fname))
+(setf unix-final-name (concatenate 'string (warp:get-lib-dir) "/" unix-dialect-fname))
 
 (format t "~% ---------------------------------------------------------------------")
 (format t "~% loading unix dialect: ~A" unix-final-name)
@@ -90,10 +90,10 @@
         (arg-string ""))
     (if (null args)                     ; everything is in cmd.
         (progn 
-          (setf parts (slip:split-string cmd #\ ))
+          (setf parts (warp:split-string cmd #\ ))
           (setf cmd-string (car parts))
           (if (not (null (cdr parts)))
-              (setf arg-string (slip:join-strings (cdr parts))))
+              (setf arg-string (warp:join-strings (cdr parts))))
           (run-internal cmd-string arg-string))
         (progn                          ; args is separate.
           (run-internal cmd args)))))
@@ -122,11 +122,11 @@
 
     (setf files (loop for e in dir-entries if (and
                                                (> (length e) 0)
-                                               (not (slip:starts-with "d" e))
-                                               (not (slip:starts-with "total" e)))
-                  collect (slip:last-word e)))
+                                               (not (warp:starts-with "d" e))
+                                               (not (warp:starts-with "total" e)))
+                  collect (warp:last-word e)))
     (if no-ext-p
-        (setf files (loop for f in files collect (car (slip:split-string f #\.)))))
+        (setf files (loop for f in files collect (car (warp:split-string f #\.)))))
     (if add-path-p
         (mapcar (lambda (f) (concatenate 'string dir "/" f)) files)
         files)))
@@ -135,20 +135,20 @@
   (let ((dir-entries (run "ls -l")))
     (loop for e in dir-entries if (and
                                    (> (length e) 0)
-                                   (slip:starts-with "d" e))
-       collect (slip:last-word e))))
+                                   (warp:starts-with "d" e))
+       collect (warp:last-word e))))
 
 (defun files ()
   (loop for f in (unix:get-files) do (format t "~% :: ~a" (run "file" (format nil "~a" f)))))
 
 (defun file-only (path)
-  (car (last (slip:split-string path #\/))))
+  (car (last (warp:split-string path #\/))))
 
 (defun file-stem (f)
-  (car (slip:split-string f #\.)))
+  (car (warp:split-string f #\.)))
 
 (defun file-ext (f)
-  (cadr (slip:split-string f #\.)))
+  (cadr (warp:split-string f #\.)))
 
 (defun add-ext (f ext)
   (concatenate 'string f "." ext))
@@ -176,7 +176,7 @@
 (defun join-paths (&rest components)
   (let ((new-path (car components)))
     (loop for c in (cdr components) do
-         (setf new-path (concatenate 'string new-path (if (not (slip:starts-with "/" c)) "/"
+         (setf new-path (concatenate 'string new-path (if (not (warp:starts-with "/" c)) "/"
                                                           "")
                                      c)))
     new-path))
@@ -322,13 +322,13 @@
 				(when is-keyword
 					(funcall usage)
 					(error "two keywords detected in a row!")))
-			(slip:store-hash args-hash (coerce key 'string) val))
+			(warp:store-hash args-hash (coerce key 'string) val))
 		args-hash))
 
                                         ; file edits
 
 (defun libedit (lib)
-  (gedit-file (concatenate 'string (slip:get-lib-dir) "/" lib ".lsp")))
+  (gedit-file (concatenate 'string (warp:get-lib-dir) "/" lib ".lsp")))
 
 (defun gedit-file (f)
   (let ((args (concatenate 'string f " &")))
@@ -370,21 +370,21 @@
 (defvar music-notes (make-hash-table :test 'equal))
 
 (defun init-music-notes ()
-	(slip:store-hash music-notes "A3" 220)
-	(slip:store-hash music-notes "D4" 293)
-	(slip:store-hash music-notes "E4" 329)
-	(slip:store-hash music-notes "F4" 349)
-	(slip:store-hash music-notes "G4" 392)
-	(slip:store-hash music-notes "A4" 440)
-	(slip:store-hash music-notes "B4" 493)
-	(slip:store-hash music-notes "C5" 523)
-	(slip:store-hash music-notes "D5" 587)
-	(slip:store-hash music-notes "E5" 659)
-	(slip:store-hash music-notes "F5" 698)
-	(slip:store-hash music-notes "G5" 784))
+	(warp:store-hash music-notes "A3" 220)
+	(warp:store-hash music-notes "D4" 293)
+	(warp:store-hash music-notes "E4" 329)
+	(warp:store-hash music-notes "F4" 349)
+	(warp:store-hash music-notes "G4" 392)
+	(warp:store-hash music-notes "A4" 440)
+	(warp:store-hash music-notes "B4" 493)
+	(warp:store-hash music-notes "C5" 523)
+	(warp:store-hash music-notes "D5" 587)
+	(warp:store-hash music-notes "E5" 659)
+	(warp:store-hash music-notes "F5" 698)
+	(warp:store-hash music-notes "G5" 784))
 	
 (defun play-music-note (note time)
-	(slip:show-hash music-notes)
+	(warp:show-hash music-notes)
 	(format t "~% playing freq: ~A for: ~A" (gethash
 		note music-notes) time)
 	(play-note
@@ -393,14 +393,14 @@
                                         ; misc
 
 (defun ui-beep ()
-  (let ((ui-beep (concatenate 'string (slip:get-lib-dir) "/" "ui-beep.wav")))
+  (let ((ui-beep (concatenate 'string (warp:get-lib-dir) "/" "ui-beep.wav")))
     (play-sound ui-beep)))
 
 
 (defun message (msg)
 	(ui-beep)
-  (slip:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) slip:green)
-  (slip:color msg slip:blue))
+  (warp:color (format nil "~%[~A] " (unix:universal-time-to-local (get-universal-time))) warp:green)
+  (warp:color msg warp:blue))
 
 (defun figlet (font mesg)
   (if (probe-file "/usr/bin/figlet")
@@ -421,7 +421,7 @@
     (format t "~% ~a" line)))
 
 (defun nedry ()
-  (let ((nedry-gif (concatenate 'string (slip:get-lib-dir) "/" "nedry.gif")))
+  (let ((nedry-gif (concatenate 'string (warp:get-lib-dir) "/" "nedry.gif")))
     (if (probe-file nedry-gif) (unix:run (format nil "gifview --animate ~A" nedry-gif))
       (format t "~% Ah Ah Ah... You didn't say the magic word!"))))
 
@@ -452,6 +452,6 @@
 (defun speak (text &key (rate 170) (pitch 50) (gap 5))
   (if (null *tts-cmd*)
       (format t "~%No TTS program found. Install espeak-ng, espeak, or say.")
-      (dolist (word (slip:split-string text #\Space))
+      (dolist (word (warp:split-string text #\Space))
         (speak-word word :rate rate :pitch pitch :gap gap))))
 

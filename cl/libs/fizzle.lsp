@@ -6,7 +6,7 @@
 
 (defpackage :fizzle
 
-  ( :use :common-lisp :slip :moth )
+  ( :use :common-lisp :warp :moth )
 
   ( :export 
    ; constants

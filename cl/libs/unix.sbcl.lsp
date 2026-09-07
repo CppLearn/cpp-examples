@@ -12,7 +12,7 @@
 
 (defun run-internal (cmd args-string)
 	(ignore-errors (let* ((output (uiop:run-program (concatenate 'string cmd " " args-string) :output :string :ignore-error-status t :force-shell t))
-												(output-list (slip:split-string output #\Newline)))
+												(output-list (warp:split-string output #\Newline)))
 									 output-list)))
 
 

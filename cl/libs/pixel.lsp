@@ -692,7 +692,7 @@
         (progn
           (let (bin-string
                  (bin-bytes nil)
-                 (bytes (slip:split-string line #\,)))
+                 (bytes (warp:split-string line #\,)))
             (loop for byte in bytes do
               (incf i)
               (setf bin-string (write-to-string (parse-integer byte) :base 2))

@@ -6,7 +6,7 @@
 
 (defpackage :moth
 
-  ( :use :common-lisp :slip )
+  ( :use :common-lisp :warp )
 
   ( :export
           ; general

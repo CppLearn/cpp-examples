@@ -1,10 +1,10 @@
 ;; -------------------------------------------------------------------------
-;;  File:    slip.lsp
+;;  File:    warp.lsp
 ;;  Created: Sun Sep 18 18:07:06 2016
 ;;  Comment: Common Lisp Library of General/Misc Functions.
 ;; -------------------------------------------------------------------------
 
-(defpackage :slip
+(defpackage :warp
   
   ( :use :common-lisp ) 
 
@@ -13,118 +13,123 @@
 		:get-lib-dir                        ; return the directory
 																				; where our lisp libs reside
 		:hello
-	 :blank-line
-	 :bin-dir
-   :puts    
-   :dump
-   :typewriter-string
-   :dot-display
-   :dot-display-type
+		:blank-line
+		:bin-dir
+		:puts    
+		:dump
+		:typewriter-string
+		:dot-display
+		:dot-display-type
                                         ; chars
-   :char-upperp
-   :rand-char
+		:char-upperp
+		:rand-char
+
                                         ; strings
-   :rtrim
-   :starts-with
-   :ends-with
-   :join-strings
-   :split-string
-   :char-in-string
-   :not-these-chars
-   :word-in-string
-   :last-word
+		:ltrim		
+		:rtrim
+		:trim
+
+		:str-cat 
+		:starts-with
+		:ends-with
+		:join-strings
+		:split-string
+		:char-in-string
+		:not-these-chars
+		:word-in-string
+		:last-word
                                         ; lists
-   :filter
-   :foreach-i
-   :i
-   :generate
-	 :mapcard
+		:filter
+		:foreach-i
+		:i
+		:generate
+		:mapcard
 		:sort-list
-   :random-choice
-   :random-elt
-   :shuffle
-   :one-of
-   :list->array
-	 :list-cols
+		:random-choice
+		:random-elt
+		:shuffle
+		:one-of
+		:list->array
+		:list-cols
                                         ; files
 		:file-loop
-   :process-file
-   :file-to-list
-   :cut-file
-   :list-to-file
-   :with-file-lines
-   :file-matrix
-   :matrix-to-file
-	 :make-logger
+		:process-file
+		:file-to-list
+		:cut-file
+		:list-to-file
+		:with-file-lines
+		:file-matrix
+		:matrix-to-file
+		:make-logger
                                         ; arrays
 		:extract-column
 
                                         ; structs
-   :magic-struct
+		:magic-struct
                                         ; hash funcs
-   :hash-key
-   :store-hash
-   :assoc-to-hash
-   :list-to-hash
-   :show-hash
-   :show-hash-type
-   :sum-hash
-   :stats-hash
-	 :make-hasher
+		:hash-key
+		:store-hash
+		:assoc-to-hash
+		:list-to-hash
+		:show-hash
+		:show-hash-type
+		:sum-hash
+		:stats-hash
+		:make-hasher
                                         ; bits
 		:make-bit-array 
-   :bit-set
-   :bit-set?
-	 :bits-to-int
+		:bit-set
+		:bit-set?
+		:bits-to-int
 
-	 :save-to-file                        ; save/load funcs
-   :open-file
-   :read-objects
-
-	 :emoji                               ; emojis
-	 :emojis
-	 :emoji-keys
-	 :one-emoji
+		:save-to-file                        ; save/load funcs
+		:open-file
+		:read-objects
+		
+		:emoji                               ; emojis
+		:emojis
+		:emoji-keys
+		:one-emoji
 		:emoji-objects
 
 																				; other data
 		:populate-countries
 	 
-	 :creature-list
-   :color
+		:creature-list
+		:color
                                         ; colors
-   :black
-   :red
-   :green
-   :yellow
-   :blue
-   :magenta
-   :cyan
-   :white
-
-   :black_u  
-   :red_u    
-   :green_u  
-   :yellow_u 
-   :blue_u   
-   :magenta_u
-   :cyan_u   
-   :white_u  
-
-   :black_b  
-   :red_b    
-   :green_b  
-   :yellow_b 
-   :blue_b   
-   :magenta_b
-   :cyan_b   
-   :white_b
-
-	 :reset
-
+		:black
+		:red
+		:green
+		:yellow
+		:blue
+		:magenta
+		:cyan
+		:white
+		
+		:black_u  
+		:red_u    
+		:green_u  
+		:yellow_u 
+		:blue_u   
+		:magenta_u
+		:cyan_u   
+		:white_u  
+		
+		:black_b  
+		:red_b    
+		:green_b  
+		:yellow_b 
+		:blue_b   
+		:magenta_b
+		:cyan_b   
+		:white_b
+		
+		:reset
+		
   ))
 
-(in-package slip)
+(in-package warp)
 
 ;;   [General Purpose Functions]
 
@@ -137,7 +142,7 @@
 	*lib-directory*)
 
 (defun hello ()
-  (write-line "hello!  Package slip is available!"))
+  (write-line "hello!  Package warp is available!"))
 
 (defun blank-line ()
   (fresh-line)
@@ -180,7 +185,7 @@
 (defun dot-display-type (lab val n)
   (let ( (dotted (dot-string lab n)) )
     (setf s (format nil "~% ~a~a" dotted val))
-    (slip:typewriter-string s 0.02)))
+    (warp:typewriter-string s 0.02)))
 
 ;;   [Char Functions]
 
@@ -197,37 +202,69 @@
 
 ;;   [String Functions]
 
+; ltrim and rtrim are coded in two entirely different ways to
+; show different techniques.
+
 (defun rtrim(s)
   "Remove spaces from right end of string."
+
+																				; use loops and rebuild new string
   (let ( (i (- (length s) 1))
          (tr nil) )
-    ; tr will be trimmed string.
+																				; tr will be trimmed string.
     (progn
-      ; travel from end of string until we hit
-      ; first non-space character.
+																				; travel from end of string until we hit
+																				; first non-space character.
       (loop while (>= i 0) do
-            (if (not (eql (aref s i) #\space))
-                (return))
-            (decf i) )
+        (if (not (eql (aref s i) #\space))
+          (return))
+        (decf i) )
 
-      ; build up the string again from end.
+																				; build up the string again from end.
       (loop while (>= i 0) do
-            (push (aref s i) tr)
-            (decf i))
+        (push (aref s i) tr)
+        (decf i))
 
-      ; convert back to string and return.
+																				; convert back to string and return.
       (coerce tr 'string))))
+
+(defun ltrim (s)
+	"Remove spaces from left end of string."
+
+	(let ((i 0)
+				 (trimmed nil) )
+		(loop for c across s do
+			(if (eql c #\space) (incf i)
+				(return)
+				)
+			)
+
+		; show how to use a displaced array		
+		(setf trimmed (make-array (- (length s) i)
+										:element-type 'character
+										:displaced-to s
+										:displaced-index-offset i))))
+
+																				; trim all spaces is the easiest.
+
+(defun trim (s)
+	"Remove all spaces from a string."
+	(remove #\space s))
+
+(defmacro str-cat (&body b)
+	`(concatenate 'string ,@b)
+	)
 
 (defun starts-with (sub str)
   "Test if a string (str) starts with the substring (sub)."
   (let ((end (length sub)))
     (if (string-equal sub (subseq str 0 end))
-        t
-        nil)))
+      t
+      nil)))
 
 (defun ends-with (sub str)
   "Test if a string (str) ends with the substring (sub)."
-  (slip:starts-with (reverse sub) (reverse str)))
+  (warp:starts-with (reverse sub) (reverse str)))
 
 (defun join-strings (string-list)
   "Joins a list of strings into single string."
@@ -259,15 +296,15 @@
   (position char string))
 
 (defun not-these-chars (char-list word)
-  (let ((pos (loop for c in char-list collect (slip:char-in-string c word))))
+  (let ((pos (loop for c in char-list collect (warp:char-in-string c word))))
     (every #'null pos)))
 
 (defun word-in-string (word string)
-  (loop for w in (slip:split-string string #\ ) do
+  (loop for w in (warp:split-string string #\ ) do
        (if (string-equal w word) (return t))))
 
 (defun last-word (string)
-  (let* ((tokens (slip:split-string string #\ ))
+  (let* ((tokens (warp:split-string string #\ ))
         (num-tokens (length tokens))
         (last-word nil))
     (if (> num-tokens 0)
@@ -281,7 +318,7 @@
                (not (funcall f x))) l))
 
 (defmacro foreach-i(lst &body b)
-  "example: slip:foreach-i animals (print slip:i))"
+  "example: warp:foreach-i animals (print warp:i))"
   `(loop for i in ,lst do
         ,@b))
 
@@ -303,7 +340,7 @@
   (progn
     (cond ( (listp a)   (nth (random (length a)) a) )
           ( (vectorp a) (aref a (random (length a))) )
-          ( t (princ "slip:random-choice: unknown type!") ) )))
+          ( t (princ "warp:random-choice: unknown type!") ) )))
 
                                         ; from Peter Norvig: PAIP
 
@@ -381,10 +418,10 @@
   "Cut nth column from file f delimited by 'delim' and specified by col (1-based)
    and return column as list."
   (let ((lyst nil) (split nil)
-        (flines (slip:file-to-list f)))
+        (flines (warp:file-to-list f)))
     (print flines)
     (dolist (line flines)
-      (setf split (slip:split-string line delim))
+      (setf split (warp:split-string line delim))
       (push (nth (1- col) split) lyst))
     (reverse lyst)))
 
@@ -428,14 +465,14 @@
 
 (defun file-matrix (fname delim)
 	"parse delimited file (fname) with delimeter (delim) into a 2-d array."
-  (let* ((row 0) (flist (slip:file-to-list fname))
+  (let* ((row 0) (flist (warp:file-to-list fname))
 					(nrows (length flist))
 					(firstrow (nth 0 flist))
-					(ncols (length (slip:split-string firstrow delim)))
+					(ncols (length (warp:split-string firstrow delim)))
 					(farray (make-array (list nrows ncols) :initial-element nil)))
     (loop for line in flist do
       (progn
-        (setf columns (slip:split-string line delim))
+        (setf columns (warp:split-string line delim))
         (loop for col from 0 to (1- ncols) do
           (setf (aref farray row col) (nth col columns)))
         (incf row)))
@@ -485,14 +522,14 @@
     (setf keys (loop for k being the hash-keys of h collect k))
     (setf keys (reverse keys))
     (dolist (k keys)
-      (slip:dot-display (string k) (gethash k h) 40))))
+      (warp:dot-display (string k) (gethash k h) 40))))
 
 (defun show-hash-type (h)
   "Show summary of hash table contents."
   (let ((keys nil))
     (setf keys (loop for key being the hash-keys of h collect key))
     (dolist (key keys)
-      (slip:dot-display-type (string key) (gethash key h) 30))))
+      (warp:dot-display-type (string key) (gethash key h) 30))))
 
 (defun assoc-to-hash (l)
   "Convert an assoc list to a hash table."
@@ -502,18 +539,18 @@
   ;;                (muffin . .75)
   ;;                (crossaint . 3.50) ))
   ;;
-  ;; (setf menu (slip:fill-hash items))
+  ;; (setf menu (warp:fill-hash items))
 
   (let ( (ht (make-hash-table)) )
   (dolist (item l)
-    (slip:store-hash ht (car item) (cdr item)))
+    (warp:store-hash ht (car item) (cdr item)))
   ht))
 
 (defun list-to-hash (lst)
   (let ( (hash (make-hash-table))
         (num-items (length lst)) )
     (loop for i from 0 to (- num-items 1) by 2 do
-         (slip:store-hash hash (nth i lst) (nth (+ 1 i) lst)))
+         (warp:store-hash hash (nth i lst) (nth (+ 1 i) lst)))
     hash))
 
 (defun sum-hash (h)
@@ -530,9 +567,9 @@
 (defun stats-hash (h)
   "Display various statistics on the values on a hash h. (Assumes float values.)"
   (progn
-    (slip:show-hash h)                    ; show hash again
+    (warp:show-hash h)                    ; show hash again
     (let* ((n (hash-table-count h))
-           (sum (slip:sum-hash h))
+           (sum (warp:sum-hash h))
            (mean (/ sum n))
            (sum-deviations 0.0)
            (sigma 0.0)
@@ -546,7 +583,7 @@
 
                                         ; create new hash table for z-scores.
       (loop for k being the hash-keys of h do
-        (slip:store-hash z-scores k (z-score (gethash k h) mean s)))
+        (warp:store-hash z-scores k (z-score (gethash k h) mean s)))
            
       (format t "~% -----------------------------------------")
       (format t "~% n:                      ~,4f" n)
@@ -556,7 +593,7 @@
       (format t "~% sigma (pop):            ~,4f" sigma)
       (format t "~% s (sample):             ~,4f" s)
       (format t "~% z-scores:")
-      (slip:show-hash z-scores))))
+      (warp:show-hash z-scores))))
 
 (defun make-hasher (ht)
 	"Return a getter function for a hash-table."
@@ -975,13 +1012,13 @@
 (setf (gethash "mage" emojis) 129497)
 
 (defun emoji-keys ()
-	(loop for k being the hash-keys of slip:emojis collect k))
+	(loop for k being the hash-keys of warp:emojis collect k))
 
 (defun emoji (emoji-name)
-	(code-char (gethash emoji-name slip:emojis)))
+	(code-char (gethash emoji-name warp:emojis)))
 
 (defun one-emoji (emoji-name)
-	(format t "~A" (slip:emoji emoji-name)))
+	(format t "~A" (warp:emoji emoji-name)))
 
 (defconstant emoji-objects '("wine glass" 
 														 "tumbler glass"

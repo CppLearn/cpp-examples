@@ -9,14 +9,14 @@
 	ext:*args*)
 
 (defun run-internal (cmd args-string)
-  (let ((args (slip:split-string args-string #\ ))
+  (let ((args (warp:split-string args-string #\ ))
         (*output-file* "clisp.run.out")
         (output-list nil))
     (ext:run-program cmd :arguments args
                      :output *output-file*
                      :if-output-exists :overwrite)
     (if (probe-file *output-file*)
-        (setf output-list (slip:file-to-list *output-file* )))
+        (setf output-list (warp:file-to-list *output-file* )))
     output-list))
 
 

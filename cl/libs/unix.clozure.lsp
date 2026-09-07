@@ -15,7 +15,7 @@
 				(output nil)
 				(output-list nil))
 		(setf output (uiop:run-program full-cmd :output :string))
-		(setf output-list (slip:split-string output #\Newline))
+		(setf output-list (warp:split-string output #\Newline))
 		output-list))
 
 
