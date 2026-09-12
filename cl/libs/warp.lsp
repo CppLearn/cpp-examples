@@ -73,6 +73,7 @@
 		:list-to-hash
 		:show-hash
 		:show-hash-type
+		:iter-hash
 		:sum-hash
 		:stats-hash
 		:make-hasher
@@ -531,6 +532,13 @@
     (dolist (key keys)
       (warp:dot-display-type (string key) (gethash key h) 30))))
 
+(defun iter-hash (ht)
+	"another way to iterate over a hash table."
+	(with-hash-table-iterator (item ht)
+		(loop for (milk key value) = (multiple-value-list (item))
+			while milk do
+			(format t "~% ~a: ~a" key value))))
+
 (defun assoc-to-hash (l)
   "Convert an assoc list to a hash table."
   ;;
@@ -542,9 +550,9 @@
   ;; (setf menu (warp:fill-hash items))
 
   (let ( (ht (make-hash-table)) )
-  (dolist (item l)
-    (warp:store-hash ht (car item) (cdr item)))
-  ht))
+		(dolist (item l)
+			(warp:store-hash ht (car item) (cdr item)))
+		ht))
 
 (defun list-to-hash (lst)
   (let ( (hash (make-hash-table))
